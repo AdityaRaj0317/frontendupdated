@@ -175,7 +175,7 @@ const AppContent = () => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
             </Route>
-
+                <Route path="/home-dashboard" element={<DashboardHome />} />
             {/* Authenticated/Protected routes wrapped by AuthenticatedLayout */}
             <Route
                 element={
@@ -189,7 +189,7 @@ const AppContent = () => {
             >
                 {/* Dashboard routes */}
                 <Route path="/dashboard" element={<DashboardInstructions />} />
-                <Route path="/home-dashboard" element={<DashboardHome />} />
+                
 
                 {/* Main application features */}
                 <Route path="/startups" element={<Startups />} />

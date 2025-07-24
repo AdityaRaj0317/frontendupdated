@@ -1,5 +1,4 @@
-// src/pages/dashboard/DashboardHome.jsx
-import React, { useState, useEffect, Fragment } from 'react'; // Import Fragment
+import React, { useState, useEffect, Fragment } from 'react';
 import { ChevronRight, Users, TrendingUp, Shield, Zap, Star, Play, ArrowRight, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -51,6 +50,12 @@ const DashboardHome = () => {
         if (!user) {
             return '/login';
         }
+        // If the 'Home' button in your main site navigation (e.g., GuestNavbar)
+        // for logged-in users is intended to lead to this full-screen DashboardHome,
+        // then that link needs to point to the new '/founder-home' (or whatever path chosen in App.jsx).
+        // The buttons *within* this DashboardHome component (like "Build Your Pitch")
+        // should likely lead to the *actual dashboard* with the sidebar.
+        // Therefore, this function returns '/dashboard' to guide users to the sidebar-equipped dashboard.
         return '/dashboard';
     };
 
@@ -176,7 +181,7 @@ const DashboardHome = () => {
             </section>
 
             {/* User Role-Based Section */}
-            {user && ( // <-- Added an opening parenthesis here
+            {user && (
                 <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                     <div className="max-w-4xl mx-auto text-center space-y-6">
                         <h2 className="text-3xl font-bold">
@@ -198,7 +203,7 @@ const DashboardHome = () => {
                         </Link>
                     </div>
                 </section>
-            )} {/* <-- Added a closing parenthesis here */}
+            )}
 
             {/* Enhanced How It Works */}
             <section id="how-it-works" className="py-20 px-6 bg-theme-section-bg">
@@ -275,7 +280,6 @@ const DashboardHome = () => {
             </section>
 
             {/* Enhanced Success Stories */}
-            {/* This section has a hardcoded gradient background, so it won't change with theme */}
             <section id="success-stories" className="py-20 px-6 bg-gradient-to-br from-gray-900 to-blue-900 text-white">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center space-y-4 mb-16">
@@ -322,7 +326,6 @@ const DashboardHome = () => {
             </section>
 
             {/* Enhanced CTA */}
-            {/* This section also has a hardcoded gradient background, so it won't change with theme */}
             <section className="py-20 px-6 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full filter blur-3xl"></div>
@@ -350,7 +353,6 @@ const DashboardHome = () => {
             </section>
 
             {/* Footer */}
-            {/* This section has hardcoded gray-900 background and white/gray-400 text, won't change with theme */}
             <footer className="bg-gray-900 text-white py-12 px-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid md:grid-cols-4 gap-8">

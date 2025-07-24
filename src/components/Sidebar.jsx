@@ -36,7 +36,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const founderNavItems = [
         { name: 'Home', icon: HomeIcon, path: '/home-dashboard' },
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { name: 'Startup', icon: Award, path: '/submit-pitch' }, // Correct path for founder
+        { name: 'My Startup', icon: Award, path: '/submit-pitch' }, // Correct path for founder
         { name: 'Explore Investors', icon: DollarSign, path: '/investors' },
         { name: 'Profile', icon: User, path: '/profile' },
         { name: 'Settings', icon: Settings, path: '/settings' },
@@ -49,7 +49,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
         { name: 'My Investments', icon: Briefcase, path: '/my-investments' },
         { name: 'Explore Startups', icon: Rocket, path: '/startups' },
-        { name: 'Explore Investors', icon: DollarSign, path: '/investor-deck' }, // Correct path for investor
         { name: 'Profile', icon: User, path: '/profile' },
         { name: 'Settings', icon: Settings, path: '/settings' },
         { name: 'Help', icon: Info, path: '/faq' },
