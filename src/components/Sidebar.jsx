@@ -1,7 +1,7 @@
-// src/components/Sidebar.jsx - CORRECTED LOGOUT BEHAVIOR (NO CHANGES NEEDED HERE FOR ADMIN PATHS)
+// src/components/Sidebar.jsx - FINAL REPLACEMENT CODE
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Correct import for useAuth
+import { useAuth } from '../context/AuthContext';
 import {
     LogOut,
     Home as HomeIcon,
@@ -13,13 +13,13 @@ import {
     Award,        // Startup icon
     DollarSign,   // Investors icon
     Rocket,       // Explore Startups icon (for Investors)
-    Briefcase,
-    Send,         // My Investments icon (for Investors), or Investments (for Admin)
+    Briefcase,    // My Investments icon (for Investors), or Investments (for Admin)
+    Send,         // (Assuming 'Send' might be used, keeping it from previous version if it was there)
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const { user, logout } = useAuth(); // Destructure user and logout
-    const navigate = useNavigate(); // Get the navigate function here
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
     const location = useLocation();
 
     /**
@@ -34,9 +34,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
     // Define navigation items for each specific user role.
     const founderNavItems = [
-        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' },
+        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' }, // <-- CHANGED FOR FOUNDER: Points to full-screen dashboard
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { name: 'My Startup', icon: Award, path: '/submit-pitch' }, // Correct path for founder
+        { name: 'My Startup', icon: Award, path: '/submit-pitch' },
         { name: 'Explore Investors', icon: DollarSign, path: '/investors' },
         { name: 'Profile', icon: User, path: '/profile' },
         { name: 'Settings', icon: Settings, path: '/settings' },
@@ -45,7 +45,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     ];
 
     const investorNavItems = [
-        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' },
+        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' }, // <-- CHANGED FOR INVESTOR: Points to full-screen dashboard
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
         { name: 'My Investments', icon: Briefcase, path: '/my-investments' },
         { name: 'Explore Startups', icon: Rocket, path: '/startups' },
@@ -56,12 +56,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     ];
 
     const adminNavItems = [
-        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' },
+        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' }, // <-- CHANGED FOR ADMIN: Points to full-screen dashboard
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { name: 'Startups', icon: Award, path: '/admin/startups' }, // Path for Admin Startups
-        { name: 'Investments', icon: Briefcase, path: '/admin/investments' }, // Path for Admin Investments
+        { name: 'Startups', icon: Award, path: '/admin/startups' },
+        { name: 'Investments', icon: Briefcase, path: '/admin/investments' },
         { name: 'Explore Startups', icon: Rocket, path: '/startups' },
-        { name: 'Explore Investors', icon: DollarSign, path: '/investor-deck' }, // Correct path for admin
+        { name: 'Explore Investors', icon: DollarSign, path: '/investors' },
         { name: 'Profile', icon: User, path: '/profile' },
         { name: 'Settings', icon: Settings, path: '/settings' },
         { name: 'Help', icon: Info, path: '/faq' },
@@ -120,7 +120,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 {/* Top Branding Section */}
                 <div className="flex items-center justify-center h-16 mt-2 mb-6">
                     <Link
-                        to="/home-dashboard"
+                        to="/home-dashboard" // <-- CHANGED: PitchBridge logo links to full-screen dashboard
                         className="text-3xl font-extrabold text-white tracking-wide hover:scale-105 transition-transform duration-200"
                         onClick={() => { if (window.innerWidth < 768) toggleSidebar(); }}
                     >

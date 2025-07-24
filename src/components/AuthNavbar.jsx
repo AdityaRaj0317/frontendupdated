@@ -1,3 +1,5 @@
+// src/components/AuthNavbar.jsx
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Bell, MessageSquare } from 'lucide-react';
@@ -7,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 const AuthNavbar = ({ toggleSidebar, navbarHeight }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth(); // Keeping logout here, as it was in the last full version
+  const { user, logout } = useAuth();
 
   return (
     <nav
@@ -41,7 +43,7 @@ const AuthNavbar = ({ toggleSidebar, navbarHeight }) => {
       <div className="flex items-center space-x-4">
         {/* Notifications */}
         <Link
-          to="/notifications"
+          to="/notifications" // Assumes /notifications is an absolute path from root
           className="text-gray-700 dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           aria-label="Notifications"
         >
@@ -50,7 +52,7 @@ const AuthNavbar = ({ toggleSidebar, navbarHeight }) => {
 
         {/* Messages Link */}
         <Link
-          to="/messages"
+          to="/messages" // Assumes /messages is an absolute path from root
           className="flex items-center text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           aria-label="Messages"
         >

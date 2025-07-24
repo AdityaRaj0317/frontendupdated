@@ -10,11 +10,17 @@ const GuestNavbar = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  const linkClass = (isMobile) =>
-    `block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-base font-medium transition-colors duration-200`;
+  // Define a class for the navigational links, including active state
+  const navLinkClass = (isActive) =>
+    `text-lg font-medium transition-colors duration-200 ${
+      isActive ? 'text-blue-600 dark:text-blue-400' : 'hover:text-blue-500 dark:hover:text-blue-300'
+    }`;
 
-  // Define a class for the non-navigational 'Explore' item
-  const nonNavigationalClass = `text-lg font-medium text-gray-700 dark:text-gray-200 cursor-not-allowed opacity-70`;
+  // Define a class for mobile links
+  const mobileLinkClass = ({ isActive }) =>
+    `block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-base font-medium transition-colors duration-200 ${
+      isActive ? 'text-blue-600 dark:text-blue-400 bg-gray-100 dark:bg-gray-800' : '' // Added active styling for mobile
+    }`;
 
 
   return (
@@ -29,35 +35,36 @@ const GuestNavbar = () => {
         <div className="hidden md:flex space-x-6 items-center">
           <NavLink
             to="/"
-            className={({ isActive }) =>
-              `text-lg font-medium transition-colors duration-200 ${
-                isActive ? 'text-blue-600 dark:text-blue-400' : 'hover:text-blue-500 dark:hover:text-blue-300'
-              }`
-            }
+            className={({ isActive }) => navLinkClass(isActive)}
           >
             Home
           </NavLink>
-          {/* EXPLORE: Changed from NavLink to span (or button) and removed 'to' prop */}
-          <span className={nonNavigationalClass}>
-            Explore {/* No redirection */}
-          </span>
+
+          {/* EXPLORE: CHANGED TO NAVLINK WITH 'to' PROP */}
+          <NavLink
+            to="/explore"
+            className={({ isActive }) => navLinkClass(isActive)}
+          >
+            Explore
+          </NavLink>
+
+          {/* You might want a separate "About Us" or "How it works" if "Explore" is not the main guest feature */}
+          {/* <NavLink
+            to="/about"
+            className={({ isActive }) => navLinkClass(isActive)}
+          >
+            About Us
+          </NavLink> */}
+
           <NavLink
             to="/login"
-            className={({ isActive }) =>
-              `text-lg font-medium transition-colors duration-200 ${
-                isActive ? 'text-blue-600 dark:text-blue-400' : 'hover:text-blue-500 dark:hover:text-blue-300'
-              }`
-            }
+            className={({ isActive }) => navLinkClass(isActive)}
           >
             Login
           </NavLink>
           <NavLink
             to="/register"
-            className={({ isActive }) =>
-              `text-lg font-medium transition-colors duration-200 ${
-                isActive ? 'text-blue-600 dark:text-blue-400' : 'hover:text-blue-500 dark:hover:text-blue-300'
-              }`
-            }
+            className={({ isActive }) => navLinkClass(isActive)}
           >
             Register
           </NavLink>
@@ -94,13 +101,11 @@ const GuestNavbar = () => {
       {/* Mobile Links */}
       {menuOpen && (
         <div className="md:hidden bg-white dark:bg-gray-900 px-4 pt-2 pb-4 space-y-2 border-t border-gray-200 dark:border-gray-700">
-          <Link to="/" onClick={toggleMenu} className={linkClass(true)}>Home</Link>
-          {/* EXPLORE MOBILE: Changed from Link to span (or button) and removed 'to' prop */}
-          <span className={linkClass(true) + " cursor-not-allowed opacity-70"} onClick={(e) => e.preventDefault()}>
-            Explore {/* No redirection */}
-          </span>
-          <Link to="/login" onClick={toggleMenu} className={linkClass(true)}>Login</Link>
-          <Link to="/register" onClick={toggleMenu} className={linkClass(true)}>Register</Link>
+          <NavLink to="/" onClick={toggleMenu} className={mobileLinkClass}>Home</NavLink>
+          {/* EXPLORE MOBILE: CHANGED TO NAVLINK WITH 'to' PROP */}
+          <NavLink to="/explore" onClick={toggleMenu} className={mobileLinkClass}>Explore</NavLink>
+          <NavLink to="/login" onClick={toggleMenu} className={mobileLinkClass}>Login</NavLink>
+          <NavLink to="/register" onClick={toggleMenu} className={mobileLinkClass}>Register</NavLink>
         </div>
       )}
     </nav>

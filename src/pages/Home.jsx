@@ -1,10 +1,11 @@
+// src/pages/Home.jsx (or EnhancedPitchBridgeHome.jsx)
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Users, TrendingUp, Shield, Zap, Star, Play, ArrowRight, Check, Sun, Moon } from 'lucide-react'; // Added Sun and Moon icons
+import { ChevronRight, Users, TrendingUp, Shield, Zap, Star, Play, ArrowRight, Check } from 'lucide-react'; // Removed Sun and Moon icons as theme toggle is now in GuestNavbar
 
-const EnhancedPitchBridgeHome = () => {
-  const [user, setUser] = useState({ role: 'founder' }); // Mock user for demo
+const Home = () => { // Renamed from EnhancedPitchBridgeHome for consistency with App.jsx mapping
+  const [user] = useState({ role: 'founder' }); // Mock user for demo, removed setUser as it's not used to change role
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [theme, setTheme] = useState('light'); // 'light' or 'dark', default to light to preserve current look
+  // Removed theme state and toggleTheme function as theme is now handled by ThemeProvider and GuestNavbar
 
   const testimonials = [
     {
@@ -42,75 +43,18 @@ const EnhancedPitchBridgeHome = () => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [testimonials.length]); // Added testimonials.length to dependency array
+  }, [testimonials.length]);
 
-  // Effect to apply data-theme attribute to the html element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
+  // Removed useEffect for `data-theme` attribute as ThemeProvider handles this globally.
+  // Removed toggleTheme function as it's no longer needed here.
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text"> {/* Apply theme classes here */}
-      {/* Enhanced Navigation */}
-      <nav className="fixed top-0 w-full bg-theme-nav-bg backdrop-blur-md border-b border-theme-border z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            {/* Enhanced Logo */}
-            <div className="relative group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700 rounded-xl shadow-lg transform transition-transform group-hover:scale-110 flex items-center justify-center relative overflow-hidden">
-                {/* Background pattern */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                <div className="absolute top-0 left-0 w-full h-full">
-                  <div className="absolute top-1 left-1 w-2 h-2 bg-white/30 rounded-full"></div>
-                  <div className="absolute bottom-1 right-1 w-1 h-1 bg-white/40 rounded-full"></div>
-                </div>
-                {/* Bridge icon representation */}
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="w-6 h-1 bg-white rounded-full mb-0.5 transform -rotate-12"></div>
-                  <div className="w-4 h-0.5 bg-white/80 rounded-full"></div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-theme-heading-primary leading-tight">PitchBridge</span>
-              <span className="text-xs text-blue-600 font-medium -mt-1">Connect • Pitch • Fund</span>
-            </div>
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#how-it-works" className="text-theme-text-secondary hover:text-blue-600 transition">How it Works</a>
-            <a href="#success-stories" className="text-theme-text-secondary hover:text-blue-600 transition">Success Stories</a>
-            <a href="#explore" className="text-theme-text-secondary hover:text-blue-600 transition">Explore</a>
-            <a href="/login" className="text-theme-text-secondary hover:text-blue-600 transition">Sign In</a>
-            
-            {/* Light/Dark Mode Button */}
-            <button
-              onClick={toggleTheme}
-              className="flex items-center space-x-2 bg-theme-button-secondary-bg text-theme-button-secondary-text px-4 py-2 rounded-full hover:bg-theme-button-secondary-hover transition text-sm font-medium"
-            >
-              {theme === 'light' ? (
-                <>
-                  <Moon className="w-4 h-4" />
-                  <span>Dark Mode</span>
-                </>
-              ) : (
-                <>
-                  <Sun className="w-4 h-4" />
-                  <span>Light Mode</span>
-                </>
-              )}
-            </button>
-
-            <a href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">
-              Get Started
-            </a>
-          </div>
-        </div>
-      </nav>
+      {/*
+        THE ENTIRE <nav> SECTION THAT WAS HERE HAS BEEN REMOVED.
+        The main GuestNavbar is now provided by PublicLayout in App.jsx.
+        This prevents duplicate navbars and ensures the correct "Explore" link works.
+      */}
 
       {/* Enhanced Hero Section with Background */}
       {/* Note: The hero's main background gradient is intentionally static as per "no effect on current homepage" */}
@@ -540,4 +484,4 @@ const EnhancedPitchBridgeHome = () => {
   );
 };
 
-export default EnhancedPitchBridgeHome;
+export default Home;
