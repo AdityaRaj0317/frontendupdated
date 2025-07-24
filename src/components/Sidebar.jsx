@@ -1,8 +1,8 @@
-// src/components/Sidebar.jsx - COMPLETE CODE
+// src/components/Sidebar.jsx - CORRECTED CODE
 
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Assuming AuthContext is correctly implemented
+import { useAuth } from '../context/AuthContext'; // <-- CORRECT IMPORT STATEMENT for useAuth
 import {
     LogOut,
     Home as HomeIcon,
@@ -11,10 +11,11 @@ import {
     Settings,
     Info,
     Mail,
-    Award,       // Startup icon
-    DollarSign,  // Investors icon
-    Rocket,      // Explore Startups icon (for Investors)
-    Briefcase,   // My Investments icon (for Investors), or Investments (for Admin)
+    Award,        // Startup icon
+    DollarSign,   // Investors icon
+    Rocket,       // Explore Startups icon (for Investors)
+    Briefcase,
+    Send,         // My Investments icon (for Investors), or Investments (for Admin)
 } from 'lucide-react'; // Ensure lucide-react is installed
 
 /**
@@ -27,7 +28,8 @@ import {
  * @param {function} props.toggleSidebar - Function to toggle the mobile sidebar's open/close state.
  */
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const { user } = useAuth(); // Destructure user, assuming it includes profileImageUrl
+    // CORRECT LOCATION for calling useAuth() and destructuring
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -36,7 +38,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
      * Navigates to the /logout page, which will then handle the logout process.
      */
     const handleLogoutClick = () => {
-        navigate('/logout');
+        logout(); // This should now correctly call the logout function from AuthContext
         if (window.innerWidth < 768) toggleSidebar();
     };
 
@@ -206,7 +208,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     </div>
                 </nav>
 
-                {/* Logout Button Section */}
                 {/* Logout Button Section */}
                 <div className="p-4">
                     <button

@@ -1,30 +1,29 @@
-// src/context/AuthContext.js - CORRECTED
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Stores the authenticated user object
-  const [loading, setLoading] = useState(true); // Indicates if initial auth check is in progress
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Get the navigate function here
 
   // Effect to load user from localStorage on initial component mount
   useEffect(() => {
     const loadUserFromLocalStorage = () => {
       try {
-        const storedToken = localStorage.getItem('token'); // Check for token
-        const storedUser = localStorage.getItem('user'); // Check for user data
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
 
         if (storedToken && storedUser) {
-          // Both token and user data must be present for a valid session
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
-          console.log("AuthContext: User loaded from localStorage:", parsedUser); // Debugging
+          console.log("AuthContext: User loaded from localStorage:", parsedUser);
         } else {
-          // Clear any incomplete or invalid data if one is missing
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setUser(null);
-          console.log("AuthContext: No valid session found in localStorage."); // Debugging
+          console.log("AuthContext: No valid session found in localStorage.");
         }
       } catch (error) {
         console.error("AuthContext: Failed to load user from localStorage:", error);
@@ -32,39 +31,39 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
         setUser(null);
       } finally {
-        setLoading(false); // Authentication check is complete
+        setLoading(false);
       }
     };
 
     loadUserFromLocalStorage();
-  }, []); // Runs only once on mount
+  }, []);
 
   // Effect to persist user to localStorage whenever `user` state changes
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
-      console.log("AuthContext: User state persisted to localStorage:", user); // Debugging
+      console.log("AuthContext: User state persisted to localStorage:", user);
     } else {
-      // User is null (logged out or no session)
       localStorage.removeItem('user');
-      localStorage.removeItem('token'); // Ensure token is also removed
-      console.log("AuthContext: User state cleared from localStorage."); // Debugging
+      localStorage.removeItem('token');
+      console.log("AuthContext: User state cleared from localStorage.");
     }
-  }, [user]); // Runs whenever the `user` state object changes
+  }, [user]);
 
-  // Logout function
+  // Logout function - now performs the redirect
   const logout = () => {
-    setUser(null); // This will trigger the useEffect above to clear localStorage
-    // No explicit localStorage.removeItem here, as useEffect handles it
+    setUser(null); // This clears local storage via the useEffect above
+    navigate('/login'); // Redirect to login page immediately after logout
+    console.log("AuthContext: User logged out and redirected to /login.");
   };
 
-  // Memoize the context value for performance optimization
+  // Memoize the context value
   const authContextValue = useMemo(() => ({
     user,
-    setUser, // Expose setUser for components like Login to update user data
-    logout,
-    loading // Expose loading state
-  }), [user, setUser, logout, loading]);
+    setUser,
+    logout, // Now this logout function also handles navigation
+    loading
+  }), [user, setUser, logout, loading]); // Added logout to dependency array
 
   return (
     <AuthContext.Provider value={authContextValue}>
