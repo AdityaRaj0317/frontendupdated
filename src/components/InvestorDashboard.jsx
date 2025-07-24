@@ -1,6 +1,6 @@
 // src/components/InvestorDashboard.jsx
 import React from 'react';
-import { DollarSign, BarChart2, Lightbulb, TrendingUp } from 'lucide-react';
+import { DollarSign, BarChart2, Lightbulb, TrendingUp, PlusCircle } from 'lucide-react';
 
 const InvestorDashboard = () => {
   return (

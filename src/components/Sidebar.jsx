@@ -1,8 +1,7 @@
-// src/components/Sidebar.jsx - CORRECTED CODE
-
+// src/components/Sidebar.jsx - CORRECTED LOGOUT BEHAVIOR (NO CHANGES NEEDED HERE FOR ADMIN PATHS)
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // <-- CORRECT IMPORT STATEMENT for useAuth
+import { useAuth } from '../context/AuthContext'; // Correct import for useAuth
 import {
     LogOut,
     Home as HomeIcon,
@@ -16,37 +15,28 @@ import {
     Rocket,       // Explore Startups icon (for Investors)
     Briefcase,
     Send,         // My Investments icon (for Investors), or Investments (for Admin)
-} from 'lucide-react'; // Ensure lucide-react is installed
+} from 'lucide-react';
 
-/**
- * Sidebar Component
- * Renders a fixed sidebar with dynamic navigation links based on user role.
- * Handles mobile slide-in/out and integrates with AuthContext for user data and logout.
- *
- * @param {object} props - Component props
- * @param {boolean} props.isOpen - Controls the visibility of the sidebar on mobile.
- * @param {function} props.toggleSidebar - Function to toggle the mobile sidebar's open/close state.
- */
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    // CORRECT LOCATION for calling useAuth() and destructuring
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const { user, logout } = useAuth(); // Destructure user and logout
+    const navigate = useNavigate(); // Get the navigate function here
     const location = useLocation();
 
     /**
      * Handles the logout button click.
-     * Navigates to the /logout page, which will then handle the logout process.
+     * Calls logout from AuthContext and then navigates.
      */
     const handleLogoutClick = () => {
-        logout(); // This should now correctly call the logout function from AuthContext
-        if (window.innerWidth < 768) toggleSidebar();
+        logout(); // Call the logout function from AuthContext
+        navigate('/login'); // <-- PERFORM REDIRECTION HERE
+        if (window.innerWidth < 768) toggleSidebar(); // Close sidebar on mobile
     };
 
     // Define navigation items for each specific user role.
     const founderNavItems = [
-        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' }, // Adjusted path for DashboardHome
+        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' },
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { name: 'Startup', icon: Award, path: '/startup-actions' },
+        { name: 'Startup', icon: Award, path: '/submit-pitch' }, // Correct path for founder
         { name: 'Explore Investors', icon: DollarSign, path: '/investors' },
         { name: 'Profile', icon: User, path: '/profile' },
         { name: 'Settings', icon: Settings, path: '/settings' },
@@ -55,10 +45,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     ];
 
     const investorNavItems = [
-        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' }, // Adjusted path for DashboardHome
+        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' },
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
         { name: 'My Investments', icon: Briefcase, path: '/my-investments' },
         { name: 'Explore Startups', icon: Rocket, path: '/startups' },
+        { name: 'Explore Investors', icon: DollarSign, path: '/investor-deck' }, // Correct path for investor
         { name: 'Profile', icon: User, path: '/profile' },
         { name: 'Settings', icon: Settings, path: '/settings' },
         { name: 'Help', icon: Info, path: '/faq' },
@@ -66,12 +57,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     ];
 
     const adminNavItems = [
-        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' }, // Adjusted path for DashboardHome
+        { name: 'Home', icon: HomeIcon, path: '/home-dashboard' },
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { name: 'Startups', icon: Award, path: '/admin/startups' },
-        { name: 'Investments', icon: Briefcase, path: '/admin/investments' },
+        { name: 'Startups', icon: Award, path: '/admin/startups' }, // Path for Admin Startups
+        { name: 'Investments', icon: Briefcase, path: '/admin/investments' }, // Path for Admin Investments
         { name: 'Explore Startups', icon: Rocket, path: '/startups' },
-        { name: 'Explore Investors', icon: DollarSign, path: '/investors' },
+        { name: 'Explore Investors', icon: DollarSign, path: '/investor-deck' }, // Correct path for admin
         { name: 'Profile', icon: User, path: '/profile' },
         { name: 'Settings', icon: Settings, path: '/settings' },
         { name: 'Help', icon: Info, path: '/faq' },
@@ -95,7 +86,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
     }
 
-    // Handles redirection to the profile page when user info area is clicked
     const handleUserInfoClick = () => {
         navigate('/profile');
         if (window.innerWidth < 768) toggleSidebar();
@@ -128,10 +118,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
                 }}
             >
-                {/* Top Branding Section: "PitchBridge" text and logo */}
+                {/* Top Branding Section */}
                 <div className="flex items-center justify-center h-16 mt-2 mb-6">
                     <Link
-                        to="/home-dashboard" // Redirects PitchBridge logo to DashboardHome
+                        to="/home-dashboard"
                         className="text-3xl font-extrabold text-white tracking-wide hover:scale-105 transition-transform duration-200"
                         onClick={() => { if (window.innerWidth < 768) toggleSidebar(); }}
                     >
@@ -139,18 +129,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     </Link>
                 </div>
 
-                {/* User Info Section: Displays user's name/email and role */}
+                {/* User Info Section */}
                 {user && (
                     <div
                         className="mb-6 mx-4 p-4 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 shadow-lg cursor-pointer hover:bg-white/20 transition-colors duration-200"
-                        onClick={handleUserInfoClick} // Redirects to profile page
+                        onClick={handleUserInfoClick}
                         role="button"
                         tabIndex="0"
                         aria-label={`View profile for ${user.name || user.email}`}
                     >
                         <div className="flex flex-col items-center text-center">
                             <div className="relative mb-3">
-                                {/* Conditional rendering for profile image or placeholder */}
                                 {user.profileImageUrl ? (
                                     <img
                                         src={user.profileImageUrl}
@@ -159,7 +148,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                     />
                                 ) : (
                                     <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/40 shadow-md">
-                                        <User size={24} className="text-white" /> {/* User icon as a placeholder avatar */}
+                                        <User size={24} className="text-white" />
                                     </div>
                                 )}
                             </div>
@@ -211,7 +200,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 {/* Logout Button Section */}
                 <div className="p-4">
                     <button
-                        onClick={handleLogoutClick} // Use the new handler
+                        onClick={handleLogoutClick}
                         className="
                             w-full flex items-center gap-4 px-4 py-3 rounded-xl
                             text-red-100 hover:text-white
