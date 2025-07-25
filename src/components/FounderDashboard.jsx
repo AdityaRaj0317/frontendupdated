@@ -1,87 +1,707 @@
-// src/components/FounderDashboard.jsx
-import React from 'react';
-import { Briefcase, TrendingUp, Users, PlusCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import {
+    Briefcase,
+    TrendingUp,
+    Users,
+    PlusCircle,
+    DollarSign,
+    Target,
+    Bell,
+    MessageSquare,
+    ClipboardCheck,
+    Star,
+    Eye,
+    CalendarDays,
+    ArrowUpRight,
+    Settings,
+    Activity,
+    LineChart,
+    Zap,
+    Upload
+} from 'lucide-react';
 
-const FounderDashboard = () => {
-  return (
-    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-xl animate-fade-in-up">
-      <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 border-b pb-4 border-gray-200 dark:border-gray-700 flex items-center">
-        <Briefcase className="mr-3 text-blue-600 dark:text-blue-400" size={30} />
-        Founder Dashboard
-      </h2>
-      <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-        Welcome back, Founder! Here's a quick overview of your startup's progress and key actions.
-      </p>
+// Import Chart.js components
+import { Line, Bar, Doughnut } from 'react-chartjs-2'; // Added Bar and Doughnut
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement, // Added for Bar chart
+    ArcElement, // Added for Doughnut chart
+    Title,
+    Tooltip,
+    Legend,
+    Filler,
+} from 'chart.js';
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {/* Card 1: Startup Profile */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-850 p-6 rounded-xl shadow-md border border-blue-100 dark:border-gray-700 transform hover:scale-[1.02] transition-transform duration-300 ease-in-out">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-blue-800 dark:text-blue-300">My Startup Profile</h3>
-            <Briefcase size={28} className="text-blue-500 dark:text-blue-400" />
-          </div>
-          <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-            Manage your company details, mission, and pitch deck. Keep it updated for investors!
-          </p>
-          <button className="w-full px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-lg flex items-center justify-center">
-            <span className="font-medium">Edit Profile</span>
-          </button>
-        </div>
+// Register Chart.js components
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement, // Registered BarElement
+    ArcElement, // Registered ArcElement
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
 
-        {/* Card 2: Fundraising Progress */}
-        <div className="bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-800 dark:to-gray-850 p-6 rounded-xl shadow-md border border-green-100 dark:border-gray-700 transform hover:scale-[1.02] transition-transform duration-300 ease-in-out">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-green-800 dark:text-green-300">Fundraising Status</h3>
-            <TrendingUp size={28} className="text-green-500 dark:text-green-400" />
-          </div>
-          <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-            Track your current funding round, investor outreach, and commitment status.
-          </p>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-3">
-            <div className="bg-green-600 h-2.5 rounded-full" style={{ width: '65%' }}></div>
-          </div>
-          <p className="text-gray-800 dark:text-gray-200 text-sm text-center mb-4">65% Raised - $650k / $1M Goal</p>
-          <button className="w-full px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-lg flex items-center justify-center">
-            <span className="font-medium">View Details</span>
-          </button>
-        </div>
+const FounderDashboard = ({ teamMembers }) => {
+    // State to manage the currently displayed chart in the "Fundraising Momentum" section
+    const [activeChart, setActiveChart] = useState('pitchViews'); // 'pitchViews', 'conversionRate', 'fundingProgress'
+    const [isDarkMode, setIsDarkMode] = useState(false); // State to track dark mode
 
-        {/* Card 3: Team Management */}
-        <div className="bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-800 dark:to-gray-850 p-6 rounded-xl shadow-md border border-purple-100 dark:border-gray-700 transform hover:scale-[1.02] transition-transform duration-300 ease-in-out">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-purple-800 dark:text-purple-300">Team Members</h3>
-            <Users size={28} className="text-purple-500 dark:text-purple-400" />
-          </div>
-          <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-            Add or manage your team, assign roles, and track responsibilities.
-          </p>
-          <div className="flex -space-x-2 overflow-hidden mb-4 justify-center">
-            <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://randomuser.me/api/portraits/men/7.jpg" alt="Team Member"/>
-            <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://randomuser.me/api/portraits/women/8.jpg" alt="Team Member"/>
-            <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://randomuser.me/api/portraits/men/9.jpg" alt="Team Member"/>
-            <span className="inline-flex items-center justify-center h-10 w-10 rounded-full ring-2 ring-white dark:ring-gray-800 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm">
-              +3
-            </span>
-          </div>
-          <button className="w-full px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 shadow-lg flex items-center justify-center">
-            <span className="font-medium">Manage Team</span>
-          </button>
-        </div>
+    useEffect(() => {
+        // Function to detect dark mode based on Tailwind's 'dark' class
+        const detectDarkMode = () => {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+        };
 
-        {/* Action Card: Add New Pitch */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center group">
-          <PlusCircle size={40} className="text-gray-400 dark:text-gray-500 mb-3 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Create New Pitch</h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-            Got a new idea or ready for the next round? Create a new pitch.
-          </p>
-          <button className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 shadow-lg">
-            Start Pitch
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+        // Initial detection
+        detectDarkMode();
+
+        // Optional: Listen for changes if your theme toggling changes the 'dark' class on <html>
+        const observer = new MutationObserver(detectDarkMode);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+        return () => observer.disconnect();
+    }, []);
+
+    // --- Mock Data ---
+    const fundingProgress = {
+        raised: 7500000,
+        goal: 10000000,
+        investorsContacted: 120,
+        meetingsScheduled: 35,
+        commitments: 5,
+        targetCloseDate: '2025-12-31'
+    };
+    const fundingPercentage = (fundingProgress.raised / fundingProgress.goal) * 100;
+
+    const pitchAnalytics = {
+        views: 2500,
+        downloads: 850,
+        conversionRate: 5.2, // Meetings scheduled / Views
+        avgRating: 4.5,
+        totalRatings: 120
+    };
+
+    const recentActivity = [
+        { id: 1, type: 'Pitch View', description: 'Your pitch deck viewed by John Doe (Investor)', time: '2 mins ago', icon: <Eye className="text-blue-500" /> },
+        { id: 2, type: 'Message', description: 'New message from Jane Smith (Investor)', time: '1 hour ago', icon: <MessageSquare className="text-green-500" /> },
+        { id: 3, type: 'Rating', description: 'Your startup received a 5-star rating from Investor A', time: 'Yesterday', icon: <Star className="text-yellow-500" /> },
+        { id: 4, type: 'Profile Update', description: 'Your startup profile was last updated', time: '3 days ago', icon: <ClipboardCheck className="text-purple-500" /> },
+    ];
+
+    // --- Chart Data & Options for different views ---
+
+    // 1. Pitch Views Chart Data & Options
+    const pitchViewsChartData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+        datasets: [
+            {
+                label: 'Pitch Views',
+                data: [500, 700, 1200, 1500, 2000, 2500, 2800, 3100],
+                borderColor: '#4F46E5', // Indigo-600
+                backgroundColor: 'rgba(79, 70, 229, 0.2)', // Indigo-600 with transparency
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#4F46E5',
+                pointBorderColor: '#fff',
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: '#4F46E5',
+                pointHoverBorderColor: '#fff',
+            },
+        ],
+    };
+
+    const pitchViewsChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    color: isDarkMode ? 'rgb(156 163 175)' : 'rgb(55 65 81)', // gray-400 / gray-700
+                }
+            },
+            title: {
+                display: true,
+                text: 'Investor Engagement Over Time (Pitch Views)',
+                color: isDarkMode ? 'rgb(249 250 251)' : 'rgb(55 65 81)', // white / gray-700
+                font: {
+                    size: 18,
+                    weight: 'bold'
+                }
+            },
+            tooltip: {
+                backgroundColor: isDarkMode ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
+                titleColor: isDarkMode ? '#000' : '#fff',
+                bodyColor: isDarkMode ? '#000' : '#fff',
+                callbacks: {
+                    label: function (context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += context.parsed.y.toLocaleString();
+                        }
+                        return label;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: isDarkMode ? 'rgba(100, 100, 100, 0.2)' : 'rgba(200, 200, 200, 0.1)', // Darker vs lighter grid
+                    borderColor: isDarkMode ? 'rgb(75 85 99)' : 'rgb(229 231 235)', // gray-700 / gray-200
+                },
+                ticks: {
+                    color: isDarkMode ? 'rgb(156 163 175)' : 'rgb(107 114 128)', // gray-400 / gray-500
+                },
+                title: {
+                    display: true,
+                    text: 'Month',
+                    color: isDarkMode ? 'rgb(249 250 251)' : 'rgb(55 65 81)',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            },
+            y: {
+                grid: {
+                    color: isDarkMode ? 'rgba(100, 100, 100, 0.2)' : 'rgba(200, 200, 200, 0.1)',
+                    borderColor: isDarkMode ? 'rgb(75 85 99)' : 'rgb(229 231 235)',
+                },
+                ticks: {
+                    color: isDarkMode ? 'rgb(156 163 175)' : 'rgb(107 114 128)',
+                    callback: function (value) {
+                        return value.toLocaleString();
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Number of Views',
+                    color: isDarkMode ? 'rgb(249 250 251)' : 'rgb(55 65 81)',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            }
+        },
+    };
+
+    // 2. Conversion Rate Chart Data & Options
+    const conversionRateChartData = {
+        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        datasets: [
+            {
+                label: 'Conversion Rate (%)',
+                data: [3.5, 4.0, 5.2, 4.8], // Meetings scheduled / Views
+                backgroundColor: '#EF4444', // Red-500
+                borderColor: '#DC2626', // Red-600
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const conversionRateChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    color: isDarkMode ? 'rgb(156 163 175)' : 'rgb(55 65 81)',
+                }
+            },
+            title: {
+                display: true,
+                text: 'Pitch Deck Conversion Rate',
+                color: isDarkMode ? 'rgb(249 250 251)' : 'rgb(55 65 81)',
+                font: {
+                    size: 18,
+                    weight: 'bold'
+                }
+            },
+            tooltip: {
+                backgroundColor: isDarkMode ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
+                titleColor: isDarkMode ? '#000' : '#fff',
+                bodyColor: isDarkMode ? '#000' : '#fff',
+                callbacks: {
+                    label: function (context) {
+                        return `${context.dataset.label}: ${context.parsed.y}%`;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: isDarkMode ? 'rgba(100, 100, 100, 0.2)' : 'rgba(200, 200, 200, 0.1)',
+                    borderColor: isDarkMode ? 'rgb(75 85 99)' : 'rgb(229 231 235)',
+                },
+                ticks: {
+                    color: isDarkMode ? 'rgb(156 163 175)' : 'rgb(107 114 128)',
+                },
+                title: {
+                    display: true,
+                    text: 'Quarter',
+                    color: isDarkMode ? 'rgb(249 250 251)' : 'rgb(55 65 81)',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            },
+            y: {
+                grid: {
+                    color: isDarkMode ? 'rgba(100, 100, 100, 0.2)' : 'rgba(200, 200, 200, 0.1)',
+                    borderColor: isDarkMode ? 'rgb(75 85 99)' : 'rgb(229 231 235)',
+                },
+                ticks: {
+                    color: isDarkMode ? 'rgb(156 163 175)' : 'rgb(107 114 128)',
+                    callback: function (value) {
+                        return `${value}%`;
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Percentage',
+                    color: isDarkMode ? 'rgb(249 250 251)' : 'rgb(55 65 81)',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            }
+        },
+    };
+
+    // 3. Funding Progress Chart Data & Options (Doughnut)
+    const fundingProgressChartData = {
+        labels: ['Raised', 'Remaining'],
+        datasets: [
+            {
+                data: [fundingProgress.raised, fundingProgress.goal - fundingProgress.raised],
+                backgroundColor: ['#10B981', '#E5E7EB'], // Green-500, Gray-200
+                borderColor: isDarkMode ? ['#047857', '#4B5563'] : ['#10B981', '#E5E7EB'], // Darker green / gray-700
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const fundingProgressChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    color: isDarkMode ? 'rgb(156 163 175)' : 'rgb(55 65 81)',
+                }
+            },
+            title: {
+                display: true,
+                text: 'Funding Progress',
+                color: isDarkMode ? 'rgb(249 250 251)' : 'rgb(55 65 81)',
+                font: {
+                    size: 18,
+                    weight: 'bold'
+                }
+            },
+            tooltip: {
+                backgroundColor: isDarkMode ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
+                titleColor: isDarkMode ? '#000' : '#fff',
+                bodyColor: isDarkMode ? '#000' : '#fff',
+                callbacks: {
+                    label: function (context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed !== null) {
+                            label += `$${context.parsed.toLocaleString()}`;
+                        }
+                        return label;
+                    }
+                }
+            }
+        },
+    };
+
+    // Array of chart types for rotation
+    const chartTypes = [
+        { key: 'pitchViews', label: 'Pitch Views' },
+        { key: 'conversionRate', label: 'Conversion Rate' },
+        { key: 'fundingProgress', label: 'Funding Progress' },
+    ];
+
+    // Auto-rotation logic
+    useEffect(() => {
+        const rotationInterval = setInterval(() => {
+            setActiveChart((prevChart) => {
+                const currentIndex = chartTypes.findIndex(chart => chart.key === prevChart);
+                const nextIndex = (currentIndex + 1) % chartTypes.length;
+                return chartTypes[nextIndex].key;
+            });
+        }, 4000); // Rotate every 8 seconds
+
+        // Clear interval on component unmount
+        return () => clearInterval(rotationInterval);
+    }, [chartTypes.length]); // Re-run effect if chartTypes length changes
+
+    // Helper to render the correct chart based on activeChart state
+    const renderChart = () => {
+        switch (activeChart) {
+            case 'pitchViews':
+                return <Line data={pitchViewsChartData} options={pitchViewsChartOptions} />;
+            case 'conversionRate':
+                return <Bar data={conversionRateChartData} options={conversionRateChartOptions} />;
+            case 'fundingProgress':
+                return <Doughnut data={fundingProgressChartData} options={fundingProgressChartOptions} />;
+            default:
+                return <Line data={pitchViewsChartData} options={pitchViewsChartOptions} />;
+        }
+    };
+
+    return (
+        <>
+            <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-2xl animate-fade-in-up">
+                <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6 border-b-4 pb-4 border-blue-600 dark:border-blue-400 flex items-center">
+                    <Briefcase className="mr-4 text-blue-600 dark:text-blue-400" size={36} />
+                    Founder Hub
+                </h2>
+                <p className="text-xl text-gray-700 dark:text-gray-300 mb-10 leading-relaxed">
+                    Empowering your startup's journey. Here's your personalized overview and key actions to propel your vision forward.
+                </p>
+
+                {/* Quick Stats & Actions Grid - Cards are now Link components */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    {/* Stat Card: Funding Raised */}
+                    <Link to="/fundraising-details" className="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-700 dark:to-indigo-800 p-5 rounded-xl shadow-lg text-white transform hover:scale-[1.03] transition-transform duration-300 ease-in-out block cursor-pointer">
+                        <div className="flex items-center justify-between mb-2">
+                            <DollarSign size={24} className="text-white/80" />
+                            <span className="text-sm font-semibold">Total Raised</span>
+                        </div>
+                        <p className="text-3xl font-bold">${(fundingProgress.raised / 1000000).toFixed(1)}M</p>
+                        <p className="text-sm text-white/80">of ${(fundingProgress.goal / 1000000).toFixed(0)}M Goal</p>
+                    </Link>
+
+                    {/* Stat Card: Pitch Views */}
+                    <Link to="/pitch-analytics" className="bg-gradient-to-r from-green-500 to-teal-600 dark:from-green-700 dark:to-teal-800 p-5 rounded-xl shadow-lg text-white transform hover:scale-[1.03] transition-transform duration-300 ease-in-out block cursor-pointer">
+                        <div className="flex items-center justify-between mb-2">
+                            <Eye className="text-white/80" size={24} />
+                            <span className="text-sm font-semibold">Pitch Views</span>
+                        </div>
+                        <p className="text-3xl font-bold">{pitchAnalytics.views}</p>
+                        <p className="text-sm text-white/80">{pitchAnalytics.downloads} Downloads</p>
+                    </Link>
+
+                    {/* Stat Card: Messages */}
+                    <Link to="/messages" className="bg-gradient-to-r from-purple-500 to-pink-600 dark:from-purple-700 dark:to-pink-800 p-5 rounded-xl shadow-lg text-white transform hover:scale-[1.03] transition-transform duration-300 ease-in-out block cursor-pointer">
+                        <div className="flex items-center justify-between mb-2">
+                            <MessageSquare size={24} className="text-white/80" />
+                            <span className="text-sm font-semibold">New Messages</span>
+                        </div>
+                        <p className="text-3xl font-bold">7</p> {/* Mock data */}
+                        <p className="text-sm text-white/80">From investors & partners</p>
+                    </Link>
+
+                    {/* Stat Card: Next Key Action */}
+                    <Link to="/milestones" className="bg-gradient-to-r from-yellow-500 to-orange-600 dark:from-yellow-700 dark:to-orange-800 p-5 rounded-xl shadow-lg text-white transform hover:scale-[1.03] transition-transform duration-300 ease-in-out block cursor-pointer">
+                        <div className="flex items-center justify-between mb-2">
+                            <Target size={24} className="text-white/80" />
+                            <span className="text-sm font-semibold">Next Deadline</span>
+                        </div>
+                        <p className="text-2xl font-bold flex items-center">
+                            <CalendarDays size={20} className="mr-2" />
+                            {new Date(fundingProgress.targetCloseDate).toLocaleDateString()}
+                        </p>
+                        <p className="text-sm text-white/80">Funding Round Close</p>
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Main Content Area - Col 1 & 2 */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* Section: Fundraising Momentum - Now dynamic charts */}
+                        <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+                                <TrendingUp className="mr-3 text-green-600 dark:text-green-400" size={26} />
+                                Fundraising Momentum
+                            </h3>
+                            <p className="text-gray-700 dark:text-gray-300 mb-6">
+                                Visualize your funding progress and key investor engagement metrics.
+                            </p>
+                            <div className="mb-6">
+                                <label htmlFor="funding-progress" className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Funding Progress: {fundingPercentage.toFixed(1)}%
+                                </label>
+                                <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
+                                    <div
+                                        className="bg-gradient-to-r from-green-400 to-green-600 h-3.5 rounded-full shadow-inner"
+                                        style={{ width: `${fundingPercentage}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                    You've raised ${fundingProgress.raised.toLocaleString()} of your ${fundingProgress.goal.toLocaleString()} goal.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mb-6">
+                                <div className="p-4 bg-blue-50 dark:bg-gray-700 rounded-lg shadow-sm">
+                                    <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{fundingProgress.investorsContacted}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Investors Contacted</p>
+                                </div>
+                                <div className="p-4 bg-purple-50 dark:bg-gray-700 rounded-lg shadow-sm">
+                                    <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{fundingProgress.meetingsScheduled}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Meetings Scheduled</p>
+                                </div>
+                                <div className="p-4 bg-yellow-50 dark:bg-gray-700 rounded-lg shadow-sm">
+                                    <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">{fundingProgress.commitments}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Commitments</p>
+                                </div>
+                            </div>
+
+                            {/* Chart Navigation Buttons */}
+                            <div className="flex justify-center gap-3 mb-6 flex-wrap">
+                                {chartTypes.map((chart) => (
+                                    <button
+                                        key={chart.key}
+                                        onClick={() => {
+                                            setActiveChart(chart.key);
+                                            // Optionally, clear auto-rotation when a button is clicked manually
+                                            // If you want auto-rotation to continue after manual click, remove this.
+                                            // We'll keep it active by default as per request: "it may rotate after some sec itself if possible"
+                                        }}
+                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300
+                                                    ${activeChart === chart.key
+                                                        ? 'bg-indigo-600 text-white shadow-md'
+                                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                                                    }`}
+                                    >
+                                        {chart.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Dynamic Chart Display Area */}
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 h-80 flex items-center justify-center text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600">
+                                {renderChart()}
+                            </div>
+
+                            <Link
+                                to="/fundraising-details"
+                                className="mt-6 w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 shadow-md flex items-center justify-center text-center"
+                            >
+                                <DollarSign className="mr-2" size={20} />
+                                View Full Fundraising Details
+                            </Link>
+                        </div>
+
+                        {/* Section: Pitch Deck Performance (from image_b8de3e.png) */}
+                        <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+                                <Target className="mr-3 text-orange-600 dark:text-orange-400" size={26} />
+                                Pitch Deck Performance
+                            </h3>
+                            <p className="text-gray-700 dark:text-gray-300 mb-6">
+                                Insights into how your pitch is performing with potential investors.
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center mb-6">
+                                <div className="p-4 bg-orange-50 dark:bg-gray-700 rounded-lg shadow-sm flex flex-col items-center justify-center">
+                                    <p className="text-3xl font-bold text-orange-700 dark:text-orange-300 flex items-center">
+                                        {pitchAnalytics.conversionRate}% <ArrowUpRight className="ml-2 text-orange-600 dark:text-orange-400" size={24} />
+                                    </p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Conversion Rate</p>
+                                </div>
+                                <div className="p-4 bg-yellow-50 dark:bg-gray-700 rounded-lg shadow-sm flex flex-col items-center justify-center">
+                                    <p className="text-3xl font-bold text-yellow-700 dark:text-yellow-300 flex items-center">
+                                        {pitchAnalytics.avgRating} <Star fill="currentColor" className="ml-2 text-yellow-500" size={24} />
+                                    </p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">({pitchAnalytics.totalRatings} reviews)</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Average Rating</p>
+                                </div>
+                            </div>
+                            <Link
+                                to="/manage-pitch-decks"
+                                className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 shadow-md flex items-center justify-center text-center"
+                            >
+                                <Briefcase className="mr-2" size={20} />
+                                Manage Pitch Decks
+                            </Link>
+                        </div>
+
+
+                        {/* Section: Team Overview */}
+                        <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+                                <Users className="mr-3 text-pink-600 dark:text-pink-400" size={26} />
+                                Team Overview
+                            </h3>
+                            <p className="text-gray-700 dark:text-gray-300 mb-6">
+                                Your core team members. Ensure everyone's profiles are up to date.
+                            </p>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+                                {/* FIX: Add conditional rendering for teamMembers */}
+                                {Array.isArray(teamMembers) && teamMembers.length > 0 ? (
+                                    teamMembers.map(member => (
+                                        <div key={member.id} className="text-center">
+                                            <img
+                                                className="inline-block h-20 w-20 rounded-full ring-2 ring-blue-300 dark:ring-blue-600 object-cover mb-2 shadow-md"
+                                                src={member.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${member.name}&backgroundColor=008cff,00b4d8,48bfe3,64dfdf,80ffdb&backgroundType=squiggles,grid,dots&scale=90`}
+                                                alt={member.name}
+                                            />
+                                            <p className="font-semibold text-gray-800 dark:text-white text-sm">{member.name}</p>
+                                            <p className="text-xs text-gray-600 dark:text-gray-400">{member.role}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full text-center py-4 text-gray-500 dark:text-gray-400">
+                                        <p className="mb-2">No team members added yet.</p>
+                                        <Link
+                                            to="/manage-team"
+                                            className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
+                                        >
+                                            Click here to add your first team member!
+                                        </Link>
+                                    </div>
+                                )}
+
+                                {/* Add member card - this button takes you to the manage-team page to add members */}
+                                {Array.isArray(teamMembers) && teamMembers.length > 0 && ( // Only show if there are members already, or adjust logic if always present
+                                    <Link
+                                        to="/manage-team"
+                                        className="text-center flex flex-col items-center justify-center p-2 group"
+                                    >
+                                        <div className="h-20 w-20 rounded-full ring-2 ring-gray-300 dark:ring-gray-600 border border-dashed border-gray-400 dark:border-gray-500 flex items-center justify-center text-gray-500 dark:text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                            <PlusCircle size={36} />
+                                        </div>
+                                        <p className="font-semibold text-gray-800 dark:text-white text-sm mt-2 group-hover:text-blue-600 dark:group-hover:text-blue-400">Add Member</p>
+                                    </Link>
+                                )}
+                            </div>
+                            <Link
+                                to="/manage-team"
+                                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md flex items-center justify-center text-center"
+                            >
+                                <Users className="mr-2" size={20} />
+                                Manage Team
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Sidebar Content Area - Col 3 */}
+                    <div className="lg:col-span-1 space-y-8">
+                        {/* Section: Recent Activity */}
+                        <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+                                <Bell className="mr-3 text-yellow-600 dark:text-yellow-400" size={26} />
+                                Recent Activity
+                            </h3>
+                            <ul className="space-y-4">
+                                {recentActivity.map(activity => (
+                                    <li key={activity.id} className="flex items-start">
+                                        <div className="flex-shrink-0 mr-3 mt-1">
+                                            {activity.icon}
+                                        </div>
+                                        <div>
+                                            <p className="text-gray-800 dark:text-white font-medium">{activity.type}: {activity.description}</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">{activity.time}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                            <Link
+                                to="/notifications"
+                                className="mt-6 w-full px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-md flex items-center justify-center text-center dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                            >
+                                <Bell className="mr-2" size={20} />
+                                View All Notifications
+                            </Link>
+                        </div>
+
+                        {/* Section: Resources for Founders (from image_7f8b8b.png) */}
+                        <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+                                <ClipboardCheck className="mr-3 text-indigo-600 dark:text-indigo-400" size={26} />
+                                Resources for Founders
+                            </h3>
+                            <ul className="space-y-3 mb-6 text-gray-700 dark:text-gray-300">
+                                <li className="flex items-start">
+                                    <span className="mr-2 text-blue-500">•</span> <Link to="/resources/pitch-deck" className="hover:underline text-blue-600 dark:text-blue-400">How to Craft a Winning Pitch Deck</Link>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="mr-2 text-blue-500">•</span> <Link to="/resources/due-diligence" className="hover:underline text-blue-600 dark:text-blue-400">Understanding Investor Due Diligence</Link>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="mr-2 text-blue-500">•</span> <Link to="/resources/key-metrics" className="hover:underline text-blue-600 dark:text-blue-400">Key Metrics for Early-Stage Startups</Link>
+                                </li>
+                            </ul>
+                            <Link
+                                to="/resources"
+                                className="w-full px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors duration-200 shadow-md flex items-center justify-center text-center"
+                            >
+                                Browse All Resources
+                            </Link>
+                        </div>
+
+
+                        {/* Section: Quick Actions */}
+                        <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+                                <PlusCircle className="mr-3 text-blue-600 dark:text-blue-400" size={26} />
+                                Quick Actions
+                            </h3>
+                            <div className="space-y-4">
+                                <Link
+                                    to="/submit-pitch"
+                                    className="flex items-center px-4 py-3 bg-blue-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                                >
+                                    <ArrowUpRight className="mr-3 text-blue-600 dark:text-blue-400" size={20} />
+                                    Submit New Pitch Deck
+                                </Link>
+                                <Link
+                                    to="/profile"
+                                    className="flex items-center px-4 py-3 bg-green-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                                >
+                                    <ClipboardCheck className="mr-3 text-green-600 dark:text-green-400" size={20} />
+                                    Update Startup Profile
+                                </Link>
+                                <Link
+                                    to="/messages"
+                                    className="flex items-center px-4 py-3 bg-purple-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-purple-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                                >
+                                    <MessageSquare className="mr-3 text-purple-600 dark:text-purple-400" size={20} />
+                                    View Messages
+                                </Link>
+                                <Link
+                                    to="/settings"
+                                    className="flex items-center px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                                >
+                                    <Settings className="mr-3 text-gray-600 dark:text-gray-400" size={20} />
+                                    Account Settings
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default FounderDashboard;

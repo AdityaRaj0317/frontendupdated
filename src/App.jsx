@@ -1,5 +1,4 @@
-// src/App.jsx - FINAL CORRECTED REPLACEMENT CODE for Redirection
-import React from 'react';
+import React, { useState } from 'react'; // Import useState
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -39,6 +38,9 @@ import UpdateProfilePicture from './pages/settings/UpdateProfilePicture';
 import NotificationSettings from './pages/settings/NotificationSettings';
 import PrivacySettings from './pages/settings/PrivacySettings';
 import DeleteAccount from './pages/settings/DeleteAccount';
+import ManageTeamPage from './pages/ManageTeamPage.jsx';
+// FIX IS HERE: Re-added .jsx extension for FounderDashboard
+import FounderDashboard from './components/FounderDashboard.jsx'; // Corrected path
 
 // Dashboard components
 import DashboardInstructions from './pages/dashboard/DashboardInstructions';
@@ -91,7 +93,7 @@ const PublicLayout = () => {
     if (user && (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot-password' || location.pathname === '/explore' || location.pathname === '/')) {
         console.log(`PublicLayout: User authenticated, redirecting from ${location.pathname} to dashboard based on role`);
         if (user.role === 'founder') {
-            return <Navigate to="/home-dashboard" replace />; // Founders always go to full-screen DashboardHome
+            return <Navigate to="/founder-dashboard" replace />; // Founders now go to /founder-dashboard
         }
         // Investors and Admins go to their sidebar-equipped dashboard initially
         return <Navigate to="/dashboard" replace />;
@@ -112,6 +114,32 @@ const PublicLayout = () => {
  */
 const AppContent = () => {
     const { user, loading } = useAuth();
+
+    // Centralized teamMembers state and functions
+    const [teamMembers, setTeamMembers] = useState([
+        { id: 1, name: 'Alice Johnson', role: 'CEO', email: 'alice@example.com', avatar: 'https://randomuser.me/api/portraits/women/7.jpg' },
+        { id: 2, name: 'Bob Williams', role: 'CTO', email: 'bob@example.com', avatar: 'https://randomuser.me/api/portraits/men/8.jpg' },
+        { id: 3, name: 'Charlie Davis', role: 'CFO', email: 'charlie@example.com', avatar: 'https://randomuser.me/api/portraits/men/9.jpg' },
+        { id: 4, name: 'Diana Prince', role: 'CMO', email: 'diana@example.com', avatar: 'https://randomuser.me/api/portraits/women/10.jpg' },
+    ]);
+
+    const handleAddOrEditMember = (newMemberData, memberIdToUpdate = null) => {
+        if (memberIdToUpdate) { // Edit existing member
+            setTeamMembers(teamMembers.map(member =>
+                member.id === memberIdToUpdate ? { ...member, ...newMemberData } : member
+            ));
+        } else { // Add new member
+            const newId = teamMembers.length > 0 ? Math.max(...teamMembers.map(m => m.id)) + 1 : 1;
+            // FIX IS HERE: No longer hardcoding avatar for new members.
+            // newMemberData already contains the `avatar` (Data URL from modal)
+            setTeamMembers([...teamMembers, { id: newId, ...newMemberData }]);
+        }
+    };
+
+    const handleDeleteMember = (id) => {
+        setTeamMembers(teamMembers.filter(member => member.id !== id));
+    };
+
 
     if (loading) {
         return <FullPageSpinner />;
@@ -142,7 +170,20 @@ const AppContent = () => {
                 {/* Default dashboard for investor/admin, or a general dashboard with sidebar */}
                 <Route path="/dashboard" element={<DashboardInstructions />} />
 
+                {/* Founder-specific dashboard with sidebar */}
+                {/* This is the route for the Founder Dashboard you want to show */}
+                <Route path="/founder-dashboard" element={user?.role === 'founder' ? <FounderDashboard teamMembers={teamMembers} /> : <Navigate to="/dashboard" replace />} />
+
                 {/* Main application features */}
+                <Route
+                    path="/manage-team"
+                    element={user?.role === 'founder' ?
+                        <ManageTeamPage
+                            teamMembers={teamMembers}
+                            onAddOrEditMember={handleAddOrEditMember}
+                            onDeleteMember={handleDeleteMember}
+                        /> : <Navigate to="/dashboard" replace />}
+                />
                 <Route path="/startups" element={<Startups />} />
                 <Route path="/startups/:id" element={<StartupDetail />} />
                 <Route path="/profile" element={<Profile />} />
