@@ -10,15 +10,15 @@ import {
     Settings,
     Info,
     Mail,
-    Award,        // Startup icon
-    DollarSign,   // Investors icon
-    Rocket,       // Explore Startups icon (for Investors)
-    Briefcase,    // My Investments icon (for Investors), or Investments (for Admin)
-    Send,         // (Assuming 'Send' might be used, keeping it from previous version if it was there)
+    Award,          // Startup icon
+    DollarSign,     // Investors icon
+    Rocket,         // Explore Startups icon (for Investors)
+    Briefcase,      // My Investments icon (for Investors), or Investments (for Admin)
+    Send,           // (Assuming 'Send' might be used, keeping it from previous version if it was there)
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const { user, logout } = useAuth();
+    const { user, logout } = useAuth(); // user object will now reflect profilePic from AuthContext
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -139,9 +139,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     >
                         <div className="flex flex-col items-center text-center">
                             <div className="relative mb-3">
-                                {user.profileImageUrl ? (
+                                {user.profilePic ? (
                                     <img
-                                        src={user.profileImageUrl}
+                                        src={user.profilePic}
                                         alt="User Profile"
                                         className="w-14 h-14 rounded-full object-cover border-2 border-white/40 shadow-md"
                                     />

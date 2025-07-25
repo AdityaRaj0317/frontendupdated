@@ -1,194 +1,336 @@
 // src/pages/Profile.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from "../context/AuthContext"; // Adjust path as needed, assuming context is in src/context
+import axios from 'axios';
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import {
-    Mail, User, Briefcase, Edit, Save, X, Lock, Settings, ChevronRight, Shield,
-    Phone, MapPin, MessageSquare, Loader2, Image, Sparkles, Trash2
+    Mail, User, Briefcase, Edit, Save, X, Settings, MapPin,
+    MessageSquare, Loader2, Image, Sparkles, Trash2
 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const Profile = () => {
-    const { user, updateUserProfile } = useAuth();
+    const { user, updateUserProfile } = useAuth(); // Destructure updateUserProfile from useAuth
     const navigate = useNavigate();
 
+    // State variables
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
+    const role = user?.role; // Ensure role is accessed safely
     const [bio, setBio] = useState(user?.bio || '');
-    const [phone, setPhone] = useState(user?.phone || '');
+    const [linkedin, setlinkedin] = useState(user?.linkedin || '');
     const [location, setLocation] = useState(user?.location || '');
-    const [profileImage, setProfileImage] = useState(user?.profileImageUrl || null);
+    const [profileImage, setProfileImage] = useState(user?.profilePic || ''); // Initialize from auth context
     const [statusMessage, setStatusMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(false); // For saving profile details
+    const [isLoading1, setIsLoading1] = useState(false); // For changing photo
+    const [isLoading2, setIsLoading2] = useState(false); // For removing photo
+    const [isFetching, setIsFetching] = useState(true); // For initial profile fetch
     const fileInputRef = useRef(null);
+    const [Dates, setDate] = useState(''); // For joined date
 
-    // useEffect for injecting global CSS animations for blobs
+    // Inject CSS for background animations
     useEffect(() => {
         const style = document.createElement('style');
-        style.id = 'profile-page-animations'; // Unique ID for this page's animations
+        style.id = 'profile-page-animations';
         style.innerHTML = `
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            .animate-fade-in {
-                animation: fadeIn 0.5s ease-out forwards;
-            }
-
-            @keyframes blob {
-                0% { transform: translate(0px, 0px) scale(1); }
-                33% { transform: translate(30px, -50px) scale(1.1); }
-                66% { transform: translate(-20px, 20px) scale(0.9); }
-                100% { transform: translate(0px, 0px) scale(1); }
-            }
-            .animate-blob {
-                animation: blob 7s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            }
-            .animation-delay-2000 {
-                animation-delay: 2s;
-            }
-            .animation-delay-4000 {
-                animation-delay: 4s;
-            }
-        `;
-
-        // Only append if not already present to avoid duplicates
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+      @keyframes blob { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }
+      .animate-blob { animation: blob 7s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+      .animation-delay-2000 { animation-delay: 2s; }
+      .animation-delay-4000 { animation-delay: 4s; }
+    `;
         if (!document.getElementById('profile-page-animations')) {
             document.head.appendChild(style);
         }
-
-        // Cleanup function to remove the style tag when component unmounts
         return () => {
             const existingStyle = document.getElementById('profile-page-animations');
-            if (existingStyle) {
-                document.head.removeChild(existingStyle);
-            }
+            if (existingStyle) document.head.removeChild(existingStyle);
         };
     }, []);
 
+    // Update base fields from user context (on initial mount and user context changes)
     useEffect(() => {
         if (user) {
             setName(user.name || '');
             setEmail(user.email || '');
             setBio(user.bio || '');
-            setPhone(user.phone || '');
             setLocation(user.location || '');
-            setProfileImage(user.profileImageUrl || null);
+            setlinkedin(user.linkedin || ''); // Ensure LinkedIn is also updated from context
+            setProfileImage(user.profilePic || ''); // Update profile image from context
+            setDate(user.createdAt); // Update creation date from context
         }
     }, [user]);
 
+    useEffect(() => {
+        let isMounted = true; // to avoid state updates after unmount
+
+        const fetchProfile = async () => {
+            try {
+                if (isMounted) {
+                    setIsFetching(true);
+                }
+
+                const token = localStorage.getItem('token');
+                const userString = localStorage.getItem('user');
+
+                if (!userString || !token) {
+                    if (isMounted) {
+                        setProfileImage('');
+                        setIsFetching(false);
+                    }
+                    return;
+                }
+
+                let userObj;
+                try {
+                    userObj = JSON.parse(userString);
+                } catch {
+                    if (isMounted) {
+                        setProfileImage('');
+                        setIsFetching(false);
+                    }
+                    return;
+                }
+
+                const id = userObj._id;
+                const response = await axios.get(`${API_BASE_URL}/api/users/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (isMounted) {
+                    const fetchedUserData = response.data;
+                    setProfileImage(fetchedUserData.profilePic || '');
+                    setDate(fetchedUserData.createdAt);
+                    setName(fetchedUserData.name || '');
+                    setEmail(fetchedUserData.email || '');
+                    setBio(fetchedUserData.bio || '');
+                    setlinkedin(fetchedUserData.linkedin || '');
+                    setLocation(fetchedUserData.location || '');
+
+                    // Ensure AuthContext user state is aligned with fetched data
+                    updateUserProfile(fetchedUserData);
+
+                    setIsFetching(false);
+                }
+            } catch (err) {
+                if (isMounted) {
+                    setStatusMessage(
+                        err.response?.data?.message || 'Could not fetch current profile data.'
+                    );
+                    setProfileImage('');
+                    setIsFetching(false);
+                }
+            }
+        };
+
+        fetchProfile();
+
+        return () => {
+            isMounted = false;  // Cleanup flag on unmount
+        };
+    }, [updateUserProfile]); // Depend on updateUserProfile to ensure it's stable and memoized by useCallback
+
+
+    // Handlers for edits, photo upload and save
     const handleSave = async () => {
         setStatusMessage('');
         setIsLoading(true);
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await updateUserProfile({
+            const updatedData = {
                 name,
                 email,
                 bio,
-                phone,
+                linkedin,
                 location,
-                profileImageUrl: profileImage
-            });
+            };
+
+            const token = localStorage.getItem('token');
+            if (!token || !user?._id) {
+                throw new Error('User not authenticated or ID not found');
+            }
+
+            const response = await axios.put(
+                `${API_BASE_URL}/api/users/${user._id}`,
+                updatedData,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            // Update AuthContext with the new data
+            updateUserProfile(response.data); // Assuming API returns the updated user object
             setStatusMessage('Profile updated successfully!');
             setIsEditing(false);
         } catch (error) {
-            console.error("Failed to update profile:", error);
-            setStatusMessage('Failed to update profile. Please try again.');
+            console.error("Error saving profile:", error);
+            setStatusMessage(error.response?.data?.message || 'Failed to update profile. Please try again.');
         } finally {
             setIsLoading(false);
             setTimeout(() => setStatusMessage(''), 3000);
         }
     };
 
+    const CLOUD_NAME = "ddz1j7qtz";
+    const UPLOAD_PRESET = "profilePhoto";
+
+    const handleImageChange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            setStatusMessage("File too large. Please choose an image under 2MB.");
+            return;
+        }
+
+        setIsLoading1(true);
+        setStatusMessage("Uploading picture...");
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            const res = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+                { method: 'POST', body: formData }
+            );
+            const data = await res.json();
+
+            if (!data.secure_url) {
+                throw new Error(data.error?.message || "Cloudinary upload failed");
+            }
+
+            setProfileImage(data.secure_url); // Update local state
+            await updateProfilePicture(data.secure_url); // Call helper to update backend and AuthContext
+            setStatusMessage("Profile picture updated successfully!");
+
+        } catch (err) {
+            console.error("Error during image upload:", err);
+            setStatusMessage(`Error uploading image: ${err.message || 'Please try again.'}`);
+        } finally {
+            setIsLoading1(false);
+            setTimeout(() => setStatusMessage(''), 3000);
+        }
+    };
+
+    const updateProfilePicture = async (imageUrl) => {
+        const token = localStorage.getItem('token');
+        if (!token || !user?._id) {
+            setStatusMessage('User not authenticated or ID not found.');
+            return;
+        }
+
+        try {
+            const response = await axios.put(
+                `${API_BASE_URL}/api/users/${user._id}`,
+                { profilePic: imageUrl },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            // Update AuthContext user state with the new profile picture URL
+            updateUserProfile({ profilePic: imageUrl });
+            setStatusMessage("Profile picture updated successfully!");
+        } catch (error) {
+            console.error("Error updating profile picture on backend:", error);
+            setStatusMessage('Failed to update profile picture on server.');
+        } finally {
+            // No need to set isLoading1 to false here, it's done in handleImageChange's finally block
+        }
+    };
+
+    const handlePhotoChangeClick = () => fileInputRef.current.click();
+
+    const handleRemovePhoto = async () => {
+        setIsLoading2(true);
+        setStatusMessage('');
+        const token = localStorage.getItem('token');
+
+        if (!token || !user?._id) {
+            setStatusMessage('User not authenticated or ID not found.');
+            setIsLoading2(false);
+            return;
+        }
+
+        try {
+            await axios.put(
+                `${API_BASE_URL}/api/users/${user._id}`,
+                { profilePic: '' }, // Set profilePic to an empty string to remove it
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setProfileImage(''); // Clear local state
+            updateUserProfile({ profilePic: '' }); // Clear profile pic in AuthContext
+            setStatusMessage('Profile photo removed.');
+        } catch (err) {
+            console.error("Error removing photo:", err);
+            setStatusMessage('Failed to remove photo. Please try again.');
+        } finally {
+            setIsLoading2(false);
+            setTimeout(() => setStatusMessage(''), 3000);
+        }
+    };
+
     const handleCancel = () => {
+        // Revert to current user context values
         setName(user?.name || '');
         setEmail(user?.email || '');
         setBio(user?.bio || '');
-        setPhone(user?.phone || '');
+        setlinkedin(user?.linkedin || ''); // Revert linkedin, assuming it was meant instead of phone
         setLocation(user?.location || '');
-        setProfileImage(user?.profileImageUrl || null);
         setIsEditing(false);
         setStatusMessage('');
     };
 
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfileImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handlePhotoChangeClick = () => {
-        fileInputRef.current.click();
-    };
-
-    const handleRemovePhoto = () => {
-        setProfileImage(null); // Set profile image to null to remove it
-    };
+    // UI Render
+    if (isFetching) { // Use isFetching for initial load state
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <p className="text-lg text-blue-500">Loading your profile...</p>
+                <Loader2 className="animate-spin w-8 h-8 text-blue-600 ml-2" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-blue-100 dark:bg-gray-900 relative overflow-hidden">
-            {/* Background blobs - Copied from settings pages */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-purple-300 dark:bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
             <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-pink-300 dark:bg-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
             <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-blue-300 dark:bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
 
             <div className="relative z-10 w-full max-w-4xl mx-auto bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-xl shadow-2xl p-8 md:p-12 border border-gray-200 dark:border-gray-700 animate-fade-in">
-                {/* Profile Header & Avatar Section */}
+                {/* Profile Header & Avatar */}
                 <div className="text-center mb-12">
-                    {/* Added Sparkles Icon */}
                     <div className="mb-4">
                         <Sparkles className="mx-auto w-16 h-16 text-yellow-400 dark:text-yellow-300" strokeWidth={1.5} />
                     </div>
-
                     <div className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-6">
-                        {/* Profile Avatar with dynamic image or initials */}
                         <div className="relative w-28 h-28 md:w-32 md:h-32">
-                            {profileImage ? (
+                            {isFetching ? (
+                                <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+                                    <Loader2 className="animate-spin" size={32} />
+                                </div>
+                            ) : profileImage ? (
                                 <img
                                     src={profileImage}
                                     alt="Profile Avatar"
                                     className="w-full h-full rounded-full object-cover border-4 border-white shadow-lg"
+                                    onError={e => { e.target.src = 'https://via.placeholder.com/150?text=No+Image'; }}
                                 />
                             ) : (
                                 <div className="w-full h-full rounded-full bg-white/20 border-4 border-white flex items-center justify-center text-5xl font-bold text-white shadow-lg">
                                     <span className="sr-only">User Avatar: </span>
-                                    {user?.name ? user.name.charAt(0).toUpperCase() : '?'}
-                                </div>
-                            )}
-                            {/* Generic Profile Icon Overlay (acting as a "logo") - ONLY SHOW IF NO profileImage */}
-                            {!profileImage && (
-                                <div
-                                    className="absolute bottom-0 right-0 w-12 h-12 md:w-14 md:h-14 rounded-full border-4 border-white bg-white flex items-center justify-center p-2 text-blue-500 shadow-md"
-                                    aria-hidden="true" // Indicate it's decorative
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                        className="w-full h-full"
-                                    >
-                                        <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695H4.188a.75.75 0 01-.437-.695z" clipRule="evenodd" />
-                                    </svg>
+                                    {name.charAt(0).toUpperCase()}
                                 </div>
                             )}
                         </div>
                         <div className="text-center md:text-left">
                             <h1 className="text-4xl font-extrabold mb-2 leading-tight text-gray-900 dark:text-white">
-                                Hello, {user?.name || 'User'}!
+                                Hello, {name || 'User'}!
                             </h1>
                             <p className="text-gray-600 dark:text-gray-300 text-lg">
                                 Manage your personal information and public profile.
                             </p>
                         </div>
                     </div>
-                    {/* Hidden file input */}
                     <input
                         type="file"
                         ref={fileInputRef}
@@ -197,54 +339,52 @@ const Profile = () => {
                         accept="image/*"
                         aria-label="Upload new profile photo"
                     />
-                    {/* Buttons to trigger file input and remove photo */}
                     <div className="flex justify-center gap-4 mt-6">
                         <button
                             onClick={handlePhotoChangeClick}
                             className="bg-blue-600 text-white px-5 py-2 rounded-full font-semibold text-sm shadow-md hover:bg-blue-700 transition flex items-center gap-2"
                             aria-label="Change Profile Photo"
+                            disabled={isLoading1}
                         >
-                            <Image className="w-4 h-4" aria-hidden="true" /> Change Photo
+                            {isLoading1 ? (
+                                <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+                            ) : (
+                                <Image className="w-4 h-4" aria-hidden="true" />
+                            )}
+                            <span>{isLoading1 ? 'Changing Photo...' : 'Change Photo'}</span>
                         </button>
-                        {profileImage && ( // Only show remove button if there's a profile image
+                        {profileImage && (
                             <button
                                 onClick={handleRemovePhoto}
+                                disabled={isLoading2}
                                 className="bg-red-500 text-white px-5 py-2 rounded-full font-semibold text-sm shadow-md hover:bg-red-600 transition flex items-center gap-2"
                                 aria-label="Remove Profile Photo"
                             >
-                                <Trash2 className="w-4 h-4" aria-hidden="true" /> Remove Photo
+                                {isLoading2 ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+                                ) : (
+                                    <Trash2 className="w-4 h-4" aria-hidden="true" />
+                                )}
+                                <span>{isLoading2 ? 'Removing Photo...' : 'Remove Photo'}</span>
                             </button>
                         )}
                     </div>
                 </div>
 
-                {/* Status Message */}
                 {statusMessage && (
                     <div
-                        className={`flex items-center gap-2 mb-4 p-3 rounded-md text-sm ${
-                            statusMessage.includes('successfully')
-                                ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                                : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
-                        }`}
+                        className={`flex items-center gap-2 mb-4 p-3 rounded-md text-sm ${statusMessage.includes('successfully')
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
+                            : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                            }`}
                         role="status"
                         aria-live="polite"
                     >
-                        {statusMessage.includes('successfully') ? (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clipRule="evenodd"
-                                />
+                        {statusMessage.includes('successfully')
+                            ? <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                        ) : (
-                            <X className="w-5 h-5" aria-hidden="true" />
-                        )}
+                            : <X className="w-5 h-5" aria-hidden="true" />}
                         {statusMessage}
                     </div>
                 )}
@@ -307,7 +447,7 @@ const Profile = () => {
                                     aria-invalid={!name ? 'true' : 'false'}
                                 />
                             ) : (
-                                <p className="text-gray-900 dark:text-white text-lg font-medium">{user?.name || 'Not Set'}</p>
+                                <p className="text-gray-900 dark:text-white text-lg font-medium">{name || 'Not Set'}</p>
                             )}
                         </div>
 
@@ -327,26 +467,32 @@ const Profile = () => {
                                     aria-invalid={!email || !email.includes('@') ? 'true' : 'false'}
                                 />
                             ) : (
-                                <p className="text-gray-900 dark:text-white text-lg font-medium">{user?.email || 'Not Set'}</p>
+                                <p className="text-gray-900 dark:text-white text-lg font-medium">{email || 'Not Set'}</p>
                             )}
                         </div>
 
-                        {/* Phone Number */}
+                        {/* linkedin */}
                         <div className="space-y-1">
-                            <label htmlFor="phoneNumber" className="text-gray-600 dark:text-gray-300 text-sm font-medium flex items-center gap-2">
-                                <Phone className="w-4 h-4" aria-hidden="true" /> Phone Number
+                            <label htmlFor="linkedin" className="text-gray-600 dark:text-gray-300 text-sm font-medium flex items-center gap-2">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="4" height="4" aria-hidden="true" className="w-4 h-4 text-blue-700">
+                                    <path d="M20.447 20.452H17.21v-5.569c0-1.328-.027-3.037-1.849-3.037-1.853 0-2.135 1.445-2.135 
+    2.939v5.667H9.036V9h3.104v1.561h.044c.433-.82 1.494-1.685 3.074-1.685
+    3.29 0 3.895 2.164 3.895 4.981v6.595zM5.337 7.433a1.81 
+    1.81 0 1 1 0-3.619 1.81 1.81 0 0 1 0 3.619zm1.789 
+    13.019H3.549V9h3.577v11.452z" />
+                                </svg> linkedin
                             </label>
                             {isEditing ? (
                                 <input
-                                    id="phoneNumber"
-                                    type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
+                                    id="linkedin"
+                                    type="text"
+                                    value={linkedin}
+                                    onChange={(e) => setlinkedin(e.target.value)}
                                     className="w-full p-3 rounded-md bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white text-lg"
-                                    placeholder="e.g., +1 (555) 123-4567"
+                                    placeholder=""
                                 />
                             ) : (
-                                <p className="text-gray-900 dark:text-white text-lg font-medium">{user?.phone || 'Not Set'}</p>
+                                <p className="text-gray-900 dark:text-white text-lg font-medium">{linkedin || 'Not Set'}</p>
                             )}
                         </div>
 
@@ -365,7 +511,7 @@ const Profile = () => {
                                     placeholder="e.g., New York, USA"
                                 />
                             ) : (
-                                <p className="text-gray-900 dark:text-white text-lg font-medium">{user?.location || 'Not Set'}</p>
+                                <p className="text-gray-900 dark:text-white text-lg font-medium">{location || 'Not Set'}</p>
                             )}
                         </div>
 
@@ -374,7 +520,7 @@ const Profile = () => {
                             <label className="text-gray-600 dark:text-gray-300 text-sm font-medium flex items-center gap-2">
                                 <Briefcase className="w-4 h-4" aria-hidden="true" /> Your Role
                             </label>
-                            <p className="text-gray-900 dark:text-white text-lg font-medium capitalize">{user?.role || 'Not Set'}</p>
+                            <p className="text-gray-900 dark:text-white text-lg font-medium capitalize">{role || 'Not Set'}</p>
                         </div>
 
                         {/* Joined On (Static Display) */}
@@ -383,7 +529,7 @@ const Profile = () => {
                                 <Briefcase className="w-4 h-4" aria-hidden="true" /> Joined On
                             </label>
                             <p className="text-gray-900 dark:text-white text-lg font-medium">
-                                {user?.joinedDate ? new Date(user.joinedDate).toLocaleDateString() : 'N/A'}
+                                {Dates ? new Date(Dates).toLocaleDateString() : 'N/A'}
                             </p>
                         </div>
 
@@ -402,7 +548,7 @@ const Profile = () => {
                                     placeholder="Tell us a little about yourself..."
                                 ></textarea>
                             ) : (
-                                <p className="text-gray-900 dark:text-white text-lg font-medium whitespace-pre-wrap">{user?.bio || 'Not Set'}</p>
+                                <p className="text-gray-900 dark:text-white text-lg font-medium whitespace-pre-wrap">{bio || 'Not Set'}</p>
                             )}
                         </div>
                     </div>
