@@ -108,7 +108,7 @@ const SubmitInvestment = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-950 dark:via-purple-950 dark:to-blue-950 flex items-center justify-center py-10 px-4">
+        <div>
             <motion.div
                 className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-white/30 dark:border-gray-700/50"
                 initial={{ opacity: 0, y: -20 }}

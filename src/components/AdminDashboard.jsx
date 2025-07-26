@@ -184,7 +184,7 @@ const AdminDashboard = () => {
 
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-2xl animate-fade-in-up">
+    <div >
       <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6 border-b-4 pb-4 border-red-600 dark:border-red-400 flex items-center">
         <ShieldCheck className="mr-4 text-red-600 dark:text-red-400" size={36} />
         Admin Control Panel
@@ -222,7 +222,7 @@ const AdminDashboard = () => {
             <span className="text-sm font-semibold">Pending Verifications</span>
           </div>
           <p className="text-3xl font-bold">{mockAdminStats.pendingVerifications}</p>
-          <p className="text-sm text-white/80">{mockAdminStats.reportedIssues} Reported Issues</p>
+          <p className="text-sm text-white/80">+{mockAdminStats.reportedIssues} Reported Issues</p>
         </Link>
 
         {/* Stat Card: Total Investments Managed (Platform-wide) */}
@@ -240,21 +240,55 @@ const AdminDashboard = () => {
         {/* Main Content Area - Col 1 & 2 */}
         <div className="lg:col-span-2 space-y-8">
           {/* Section: Platform Performance & Analytics (Dynamic Graphs) */}
-          <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+          <div className="bg-white dark:bg-gray-700 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+            {/* Force heading and paragraph text to black in dark mode */}
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-black mb-5 flex items-center">
               <BarChart2 className="mr-3 text-red-600 dark:text-red-400" size={26} />
               Platform Performance & Analytics
             </h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-6">
+            <p className="text-gray-700 dark:text-black mb-6">
               Dive into key metrics and visualize platform health and user trends.
             </p>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 h-80 flex items-center justify-center text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600 relative">
+            <div className="bg-gray-50 dark:bg-gray-750 rounded-lg p-5 h-80 flex items-center justify-center text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600 relative">
               <div className="w-full h-full transition-opacity duration-700 ease-in-out opacity-100">
                 {/* Use the actual Chart.js component here */}
                 <CurrentAdminGraphComponent
                   key={currentGraphIndex} // Crucial: forces component remount on index change
                   data={currentAdminGraphData}
-                  options={currentAdminGraphOptions}
+                  options={{
+                    ...currentAdminGraphOptions,
+                    plugins: {
+                      ...currentAdminGraphOptions.plugins,
+                      legend: {
+                        labels: {
+                          color: 'black' // Force Chart.js legend text to black in dark mode
+                        }
+                      },
+                      title: {
+                        display: true,
+                        text: currentAdminGraphOptions.plugins.title.text,
+                        color: 'black' // Force Chart.js title text to black in dark mode
+                      }
+                    },
+                    scales: {
+                      x: {
+                        ticks: {
+                          color: 'black' // Force Chart.js x-axis ticks to black in dark mode
+                        },
+                        grid: {
+                          color: 'rgba(0, 0, 0, 0.2)' // Adjust grid line color for black text visibility
+                        }
+                      },
+                      y: {
+                        ticks: {
+                          color: 'black' // Force Chart.js y-axis ticks to black in dark mode
+                        },
+                        grid: {
+                          color: 'rgba(0, 0, 0, 0.2)' // Adjust grid line color for black text visibility
+                        }
+                      }
+                    }
+                  }}
                 />
               </div>
 
@@ -280,41 +314,44 @@ const AdminDashboard = () => {
           </div>
 
           {/* Section: Latest Reported Issues (Table) */}
-          <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+          <div className="bg-white dark:bg-gray-700 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+            {/* Force heading and paragraph text to black in dark mode */}
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-black mb-5 flex items-center">
               <AlertTriangle className="mr-3 text-orange-600 dark:text-orange-400" size={26} />
               Latest Reported Issues
             </h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-6">
+            <p className="text-gray-700 dark:text-black mb-6">
               Quick overview of recent issues reported by users.
             </p>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+                <thead className="bg-gray-50 dark:bg-gray-750">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {/* Force table header text to black in dark mode */}
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-black uppercase tracking-wider">
                       Issue ID
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-black uppercase tracking-wider">
                       Summary
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-black uppercase tracking-wider">
                       Reported By
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-black uppercase tracking-wider">
                       Status
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-black uppercase tracking-wider">
                       Date
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-850 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
                   {mockIssues.map((issue) => ( // Use mockIssues here
-                    <tr key={issue.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{issue.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{issue.summary}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{issue.reporter}</td>
+                    <tr key={issue.id} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+                      {/* Force text to black in dark mode for table cells */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-black">{issue.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-black">{issue.summary}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-black">{issue.reporter}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           issue.status === 'Open' ? 'bg-red-100 text-red-800' :
@@ -324,7 +361,7 @@ const AdminDashboard = () => {
                           {issue.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{issue.date}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-black">{issue.date}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -343,15 +380,17 @@ const AdminDashboard = () => {
         {/* Sidebar Content Area - Col 3 */}
         <div className="lg:col-span-1 space-y-8">
           {/* Section: Admin Quick Actions */}
-          <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+          <div className="bg-white dark:bg-gray-700 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+            {/* Force heading text to black in dark mode */}
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-black mb-5 flex items-center">
               <Activity className="mr-3 text-blue-600 dark:text-blue-400" size={26} />
               Admin Quick Actions
             </h3>
             <div className="space-y-4">
               <Link
                 to="/admin/users/create"
-                className="flex items-center px-4 py-3 bg-blue-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                // Force text to black in dark mode for link buttons
+                className="flex items-center px-4 py-3 bg-blue-50 dark:bg-gray-650 rounded-lg shadow-sm hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-black font-medium"
               >
                 <UserPlus className="mr-3 text-blue-600 dark:text-blue-400" size={20} />
                 Add New User
@@ -359,7 +398,7 @@ const AdminDashboard = () => {
 
               <Link
                 to="/admin/content/manage"
-                className="flex items-center px-4 py-3 bg-green-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                className="flex items-center px-4 py-3 bg-green-50 dark:bg-gray-650 rounded-lg shadow-sm hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-black font-medium"
               >
                 <FileText className="mr-3 text-green-600 dark:text-green-400" size={20} />
                 Manage Content
@@ -367,7 +406,7 @@ const AdminDashboard = () => {
 
               <Link
                 to="/admin/settings"
-                className="flex items-center px-4 py-3 bg-purple-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-purple-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                className="flex items-center px-4 py-3 bg-purple-50 dark:bg-gray-650 rounded-lg shadow-sm hover:bg-purple-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-black font-medium"
               >
                 <Settings className="mr-3 text-purple-600 dark:text-purple-400" size={20} />
                 System Settings
@@ -375,7 +414,7 @@ const AdminDashboard = () => {
 
               <Link
                 to="/admin/broadcast"
-                className="flex items-center px-4 py-3 bg-red-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-red-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                className="flex items-center px-4 py-3 bg-red-50 dark:bg-gray-650 rounded-lg shadow-sm hover:bg-red-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-black font-medium"
               >
                 <Mail className="mr-3 text-red-600 dark:text-red-400" size={20} />
                 Send Broadcast
@@ -384,7 +423,7 @@ const AdminDashboard = () => {
               {/* Help & FAQ Button */}
               <Link
                 to="/admin/faq"
-                className="flex items-center px-4 py-3 bg-yellow-50 dark:bg-gray-700 rounded-lg shadow-sm hover:bg-yellow-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-white font-medium"
+                className="flex items-center px-4 py-3 bg-yellow-50 dark:bg-gray-650 rounded-lg shadow-sm hover:bg-yellow-100 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-800 dark:text-black font-medium"
               >
                 <HelpCircle className="mr-3 text-yellow-600 dark:text-yellow-400" size={20} />
                 Help & FAQ
@@ -393,21 +432,23 @@ const AdminDashboard = () => {
           </div>
 
           {/* Section: Recent Admin Activity */}
-          <div className="bg-white dark:bg-gray-850 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-5 flex items-center">
+          <div className="bg-white dark:bg-gray-700 p-7 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+            {/* Force heading text to black in dark mode */}
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-black mb-5 flex items-center">
               <Clock className="mr-3 text-lime-600 dark:text-lime-400" size={26} />
               Recent Admin Activity
             </h3>
             <ul className="space-y-4">
               {mockRecentActivity.map((activity) => (
-                <li key={activity.id} className="flex items-start bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                <li key={activity.id} className="flex items-start bg-gray-50 dark:bg-gray-750 p-4 rounded-lg shadow-sm">
                   <div className="flex-shrink-0 mr-4 mt-1">
                     {activity.icon}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800 dark:text-white">{activity.type}</p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">{activity.description}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{activity.time}</p>
+                    {/* Force activity text to black in dark mode */}
+                    <p className="font-semibold text-gray-800 dark:text-black">{activity.type}</p>
+                    <p className="text-sm text-gray-700 dark:text-black">{activity.description}</p>
+                    <p className="text-xs text-gray-500 dark:text-black mt-1">{activity.time}</p>
                   </div>
                 </li>
               ))}

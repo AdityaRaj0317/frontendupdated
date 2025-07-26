@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Import useState
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -39,8 +39,7 @@ import NotificationSettings from './pages/settings/NotificationSettings';
 import PrivacySettings from './pages/settings/PrivacySettings';
 import DeleteAccount from './pages/settings/DeleteAccount';
 import ManageTeamPage from './pages/ManageTeamPage.jsx';
-// FIX IS HERE: Re-added .jsx extension for FounderDashboard
-import FounderDashboard from './components/FounderDashboard.jsx'; // Corrected path
+import FounderDashboard from './components/FounderDashboard.jsx';
 
 // Dashboard components
 import DashboardInstructions from './pages/dashboard/DashboardInstructions';
@@ -54,19 +53,15 @@ const AuthenticatedRouteWrapper = () => {
     const { user, loading } = useAuth();
     const location = useLocation();
 
-    // Show a full page spinner while authentication status is being determined
     if (loading) {
         return <FullPageSpinner />;
     }
 
-    // Redirect unauthenticated users to login page
     if (!user) {
         console.log(`AuthenticatedRouteWrapper: User not found, redirecting to /login from ${location.pathname}`);
         return <Navigate to="/login" state={{ from: location.pathname }} replace />;
     }
 
-    // This wrapper is for routes that *should* have the sidebar.
-    // The /home-dashboard route is handled separately and does NOT use this wrapper.
     console.log('--- App.jsx Debugging User Role in AuthenticatedRouteWrapper ---');
     console.log('Current user object:', user);
     console.log('User role from AuthContext:', user?.role);
@@ -74,6 +69,8 @@ const AuthenticatedRouteWrapper = () => {
     console.log('--- End App.jsx Debugging ---');
 
     return (
+        // AuthLayout will now simply render its sidebar and main content area
+        // It does NOT need to set its own background, as the root App component does that.
         <AuthLayout>
             <Outlet /> {/* Renders the specific page component for the matched nested route */}
         </AuthLayout>
@@ -89,18 +86,18 @@ const PublicLayout = () => {
     const location = useLocation();
 
     // REDIRECTION LOGIC FOR AUTHENTICATED USERS AWAY FROM PUBLIC ROUTES
-    // This now correctly redirects based on role for initial landing.
     if (user && (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot-password' || location.pathname === '/explore' || location.pathname === '/')) {
         console.log(`PublicLayout: User authenticated, redirecting from ${location.pathname} to dashboard based on role`);
         if (user.role === 'founder') {
-            return <Navigate to="/founder-dashboard" replace />; // Founders now go to /founder-dashboard
+            return <Navigate to="/founder-dashboard" replace />;
         }
-        // Investors and Admins go to their sidebar-equipped dashboard initially
         return <Navigate to="/dashboard" replace />;
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        // REMOVED: bg-gray-50 dark:bg-gray-900 from here.
+        // The background is now handled by the root App component.
+        <div className="min-h-screen"> {/* Keep min-h-screen for layout sizing */}
             <GuestNavbar />
             <main className="pt-16"> {/* Use padding-top to ensure content starts below the fixed GuestNavbar */}
                 <Outlet /> {/* Renders the specific public page component */}
@@ -115,7 +112,6 @@ const PublicLayout = () => {
 const AppContent = () => {
     const { user, loading } = useAuth();
 
-    // Centralized teamMembers state and functions
     const [teamMembers, setTeamMembers] = useState([
         { id: 1, name: 'Alice Johnson', role: 'CEO', email: 'alice@example.com', avatar: 'https://randomuser.me/api/portraits/women/7.jpg' },
         { id: 2, name: 'Bob Williams', role: 'CTO', email: 'bob@example.com', avatar: 'https://randomuser.me/api/portraits/men/8.jpg' },
@@ -124,14 +120,12 @@ const AppContent = () => {
     ]);
 
     const handleAddOrEditMember = (newMemberData, memberIdToUpdate = null) => {
-        if (memberIdToUpdate) { // Edit existing member
+        if (memberIdToUpdate) {
             setTeamMembers(teamMembers.map(member =>
                 member.id === memberIdToUpdate ? { ...member, ...newMemberData } : member
             ));
-        } else { // Add new member
+        } else {
             const newId = teamMembers.length > 0 ? Math.max(...teamMembers.map(m => m.id)) + 1 : 1;
-            // FIX IS HERE: No longer hardcoding avatar for new members.
-            // newMemberData already contains the `avatar` (Data URL from modal)
             setTeamMembers([...teamMembers, { id: newId, ...newMemberData }]);
         }
     };
@@ -140,12 +134,13 @@ const AppContent = () => {
         setTeamMembers(teamMembers.filter(member => member.id !== id));
     };
 
-
     if (loading) {
-        return <FullPageSpinner />;
+        return <FullPageSpinner />; // This spinner is rendered within the theme background now
     }
 
     return (
+        // The routes themselves do not need to manage the background or blobs,
+        // as they are provided by the parent App component.
         <Routes>
             {/* Public routes wrapped by PublicLayout */}
             <Route element={<PublicLayout />}>
@@ -159,6 +154,7 @@ const AppContent = () => {
             {/* DashboardHome - This is the special full-screen route for ALL authenticated users
                 when they explicitly navigate to it (e.g., via sidebar "Home" link).
                 It is NOT wrapped by AuthLayout, so no sidebar here.
+                It will automatically sit on the global themed background.
             */}
             <Route
                 path="/home-dashboard"
@@ -171,7 +167,6 @@ const AppContent = () => {
                 <Route path="/dashboard" element={<DashboardInstructions />} />
 
                 {/* Founder-specific dashboard with sidebar */}
-                {/* This is the route for the Founder Dashboard you want to show */}
                 <Route path="/founder-dashboard" element={user?.role === 'founder' ? <FounderDashboard teamMembers={teamMembers} /> : <Navigate to="/dashboard" replace />} />
 
                 {/* Main application features */}
@@ -220,11 +215,11 @@ const AppContent = () => {
                 <Route path="/admin/investments" element={user?.role === 'admin' ? <InvestorDeck /> : <Navigate to="/dashboard" replace />} />
 
                 {/* Fallback for protected routes */}
-                <Route path="*" element={<div className="text-center text-xl font-bold mt-10">Protected Route: 404 Not Found or Unauthorized Access</div>} />
+                <Route path="*" element={<div className="text-center text-xl font-bold mt-10 text-theme-heading-primary">Protected Route: 404 Not Found or Unauthorized Access</div>} />
             </Route>
 
             {/* Catch-all for any other routes not matched */}
-            <Route path="*" element={<div className="text-center text-xl font-bold mt-10">404 Not Found</div>} />
+            <Route path="*" element={<div className="text-center text-xl font-bold mt-10 text-theme-heading-primary">404 Not Found</div>} />
         </Routes>
     );
 };
@@ -236,7 +231,22 @@ const App = () => (
     <Router>
         <AuthProvider>
             <ThemeProvider>
-                <AppContent />
+                {/* This is the new centralized background and animated blobs for the entire app */}
+                {/* The z-10 is crucial here to bring your page content forward */}
+                <div className="relative min-h-screen flex flex-col overflow-hidden bg-theme-bg">
+                    {/* Background Gradient & Animated Shapes - Now CENTRALIZED */}
+                    <div className="absolute inset-0 bg-theme-gradient-start z-0">
+                        <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-theme-blob-1 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+                        <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-theme-blob-2 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-theme-blob-3 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                    </div>
+
+                    {/* Content Wrapper - ensures pages are on top of blobs */}
+                    {/* flex-grow allows the content area to expand and fill the available space */}
+                    <div className="relative z-10 flex-grow flex flex-col">
+                        <AppContent /> {/* AppContent contains all your routes and layouts */}
+                    </div>
+                </div>
             </ThemeProvider>
         </AuthProvider>
     </Router>

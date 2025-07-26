@@ -245,8 +245,7 @@ const Messages = () => {
 
   return (
     // Main Container with Soft Radial Gradient Background
-    <div className="relative flex h-[calc(100vh-64px)] p-6 rounded-3xl shadow-2xl overflow-hidden
-                    bg-[radial-gradient(at_top_left,_#fefce8_0%,_transparent_50%),_radial-gradient(at_top_right,_#fff7ed_0%,_transparent_50%)] dark:bg-[radial-gradient(at_top_left,_rgba(25,30,40,0.8)_0%,_transparent_50%),_radial-gradient(at_top_right,_rgba(25,30,40,0.8)_0%,_transparent_50%)] animate-fade-in-up">
+    <div >
       {/* Container for the chat box itself */}
       <div className="flex flex-1 rounded-2xl shadow-inset-xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
 

@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, SlidersHorizontal, MapPin, Building2, TrendingUp, DollarSign, Lightbulb, Clock, UserCheck, ShieldCheck, Zap, Globe, BriefcaseBusiness, Crown, Rocket, X } from 'lucide-react'; 
+import { Search, SlidersHorizontal, MapPin, Building2, DollarSign, Lightbulb, Clock, UserCheck, ShieldCheck, Zap, Globe, BriefcaseBusiness, Crown, Rocket, X, TrendingUp } from 'lucide-react'; 
 
 // --- IMPORT ALL LOCAL IMAGES HERE ---
 // Ensure these paths match where you placed your images EXACTLY.
@@ -177,67 +176,38 @@ const ExploreOpportunities = () => {
     setShowFilterPopup(false);
   };
 
-  // Define a set of Tailwind colors for the LIGHT theme
-  const themeColors = {
-    'bg-primary': 'bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100',
-    'bg-secondary': 'bg-white', 
-    'text-primary': 'text-gray-800',
-    'text-secondary': 'text-gray-600',
-    'text-accent': 'text-blue-600',
-    'border-color': 'border-gray-200',
-    'card-bg': 'bg-white', 
-    'card-hover-bg': 'hover:bg-blue-50', // Light blue hover
-    'button-primary-bg': 'bg-blue-600',
-    'button-primary-hover': 'hover:bg-blue-700',
-    'button-secondary-bg': 'bg-gray-100',
-    'button-secondary-hover': 'hover:bg-gray-200',
-    'input-bg': 'bg-white',
-    'focus-ring': 'focus:ring-blue-400',
-    'active-tab-bg': 'bg-blue-600',
-    'active-tab-text': 'text-white',
-    'inactive-tab-text': 'text-gray-700',
-    'gradient-start-investor': 'from-blue-400', // Lighter gradient
-    'gradient-end-investor': 'to-purple-400',
-    'gradient-start-startup': 'from-emerald-400', // Lighter gradient
-    'gradient-end-startup': 'to-cyan-400',
-    'search-panel-bg': 'bg-white', 
-    'shadow-light': 'shadow-lg',
-    'shadow-medium': 'shadow-xl',
-    'shadow-strong': 'shadow-2xl',
-  };
-
   return (
-    <div className={`min-h-screen ${themeColors['bg-primary']} ${themeColors['text-primary']} py-8 md:py-12 px-4 sm:px-6 lg:px-8 font-sans relative`}>
-        {/* Background blobs from Login page, adapted for light theme */}
+    <div className={`min-h-screen bg-theme-bg text-theme-text py-8 md:py-12 px-4 sm:px-6 lg:px-8 font-sans relative`}>
+        {/* Background blobs - Using theme variables */}
         <div className="absolute inset-0 z-0">
-            <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-            <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+            <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-theme-blob-1 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+            <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-theme-blob-2 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-theme-blob-3 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
         </div>
 
       {/* Header and tools section */}
       <div className="max-w-7xl mx-auto mb-12 relative z-10">
-        <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-purple-700 text-center mb-4 leading-tight drop-shadow-md">
+        <h1 className="text-4xl md:text-6xl font-extrabold  bg-clip-text bg-gradient-to-r from-theme-gradient-text-start to-theme-gradient-text-end text-center mb-4 leading-tight drop-shadow-md">
           Explore Your Next Partnership
         </h1>
-        <p className={`text-xl md:text-2xl ${themeColors['text-secondary']} text-center mb-8 max-w-3xl mx-auto`}>
+        <p className={`text-xl md:text-2xl text-theme-text-secondary text-center mb-8 max-w-3xl mx-auto`}>
           Discover a curated list of innovative startups and impactful investors.
         </p>
 
-        <div className={`flex flex-col md:flex-row items-center justify-between gap-6 mb-10 p-4 rounded-xl ${themeColors['shadow-strong']} ${themeColors['search-panel-bg']} border ${themeColors['border-color']}`}>
+        <div className={`flex flex-col md:flex-row items-center justify-between gap-6 mb-10 p-4 rounded-xl shadow-2xl bg-theme-card-bg border border-theme-border`}>
           {/* Search Box */}
           <div className="relative flex-grow w-full md:w-auto group">
             <input
               type="text"
-              className={`w-full pl-12 pr-4 py-3 ${themeColors['input-bg']} ${themeColors['text-primary']} rounded-xl border-2 ${themeColors['border-color']} focus:outline-none focus:border-blue-500 ${themeColors['focus-ring']} transition-all duration-300 placeholder-gray-400 shadow-inner`}
+              className={`w-full pl-12 pr-4 py-3 bg-theme-input-bg text-theme-text rounded-xl border-2 border-theme-input-border focus:outline-none focus:border-theme-input-border-hover focus:ring-3 focus:ring-theme-link/50 transition-all duration-300 placeholder-theme-input-placeholder shadow-inner`}
               placeholder="Search by name, industry, location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => { if (e.key === 'Enter') handleSearch(); }}
             />
-            <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${themeColors['text-secondary']} w-6 h-6 group-focus-within:text-blue-500 transition-colors duration-200`} />
+            <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-theme-text-secondary w-6 h-6 group-focus-within:text-theme-link transition-colors duration-200`} />
             <button
-              className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-5 py-1.5 rounded-lg ${themeColors['button-primary-bg']} text-white ${themeColors['button-primary-hover']} transition duration-200 font-semibold ${themeColors['shadow-light']} focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-5 py-1.5 rounded-lg bg-theme-button-primary-bg text-theme-button-primary-text hover:bg-theme-button-primary-hover transition duration-200 font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-theme-link/50`}
               onClick={handleSearch}
             >
               Search
@@ -247,15 +217,15 @@ const ExploreOpportunities = () => {
           {/* Buttons Row (Show All & Filter) */}
           <div className="flex items-center gap-4 w-full md:w-auto justify-end">
             <button
-              className={`px-6 py-3 ${themeColors['button-secondary-bg']} ${themeColors['text-primary']} rounded-xl ${themeColors['button-secondary-hover']} transition duration-200 ${themeColors['shadow-light']} flex items-center gap-2 font-semibold border ${themeColors['border-color']} hover:border-blue-300`}
+              className={`px-6 py-3 bg-theme-button-secondary-bg text-theme-button-secondary-text rounded-xl hover:bg-theme-button-secondary-hover transition duration-200 shadow-lg flex items-center gap-2 font-semibold border border-theme-border hover:border-theme-input-border-hover`}
               onClick={handleShowAll}
             >
-              <Globe className={`w-5 h-5 ${themeColors['text-secondary']}`} /> Show All
+              <Globe className={`w-5 h-5 text-theme-text-secondary`} /> Show All
             </button>
 
             {/* Filter Toggle Button */}
             <button
-              className={`px-6 py-3 ${themeColors['button-primary-bg']} ${themeColors['active-tab-text']} rounded-xl ${themeColors['button-primary-hover']} transition duration-200 ${themeColors['shadow-light']} flex items-center gap-2 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              className={`px-6 py-3 bg-theme-button-primary-bg text-theme-button-primary-text rounded-xl hover:bg-theme-button-primary-hover transition duration-200 shadow-lg flex items-center gap-2 font-semibold focus:outline-none focus:ring-2 focus:ring-theme-link/50`}
               id="filterToggleBtn"
               onClick={handleFilterToggle}
               aria-expanded={showFilterPopup}
@@ -270,10 +240,10 @@ const ExploreOpportunities = () => {
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto relative z-10">
         {/* Toggle Buttons for Investor/Startup */}
-        <div className={`flex justify-center mb-10 ${themeColors['search-panel-bg']} rounded-full p-2 ${themeColors['shadow-medium']} border ${themeColors['border-color']}`}>
+        <div className={`flex justify-center mb-10 bg-theme-card-bg rounded-full p-2 shadow-xl border border-theme-border`}>
           <button
             className={`flex-1 px-8 py-4 rounded-full text-xl font-bold transition-all duration-300 ease-in-out flex items-center justify-center gap-3
-              ${activeTab === 'startup' ? `${themeColors['active-tab-bg']} ${themeColors['active-tab-text']} ${themeColors['shadow-medium']} transform scale-105` : `bg-transparent ${themeColors['inactive-tab-text']} ${themeColors['button-secondary-hover']} hover:text-blue-600`}
+              ${activeTab === 'startup' ? `bg-theme-button-primary-bg text-theme-button-primary-text shadow-xl transform scale-105` : `bg-transparent text-theme-text hover:bg-theme-button-secondary-hover hover:text-theme-link`}
             `}
             onClick={() => setActiveTab('startup')}
           >
@@ -281,7 +251,7 @@ const ExploreOpportunities = () => {
           </button>
           <button
             className={`flex-1 px-8 py-4 rounded-full text-xl font-bold transition-all duration-300 ease-in-out flex items-center justify-center gap-3
-              ${activeTab === 'investor' ? `${themeColors['active-tab-bg']} ${themeColors['active-tab-text']} ${themeColors['shadow-medium']} transform scale-105` : `bg-transparent ${themeColors['inactive-tab-text']} ${themeColors['button-secondary-hover']} hover:text-blue-600`}
+              ${activeTab === 'investor' ? `bg-theme-button-primary-bg text-theme-button-primary-text shadow-xl transform scale-105` : `bg-transparent text-theme-text hover:bg-theme-button-secondary-hover hover:text-theme-link`}
             `}
             onClick={() => setActiveTab('investor')}
           >
@@ -295,46 +265,46 @@ const ExploreOpportunities = () => {
             {filteredInvestors.length > 0 ? (
               filteredInvestors.map((investor) => (
                 <div className={`
-                  ${themeColors['card-bg']} rounded-2xl ${themeColors['shadow-medium']} p-7 flex flex-col items-center text-center transition-all duration-300
-                  hover:${themeColors['shadow-strong']} hover:-translate-y-2 ${themeColors['card-hover-bg']}
-                  border ${themeColors['border-color']} hover:border-blue-400 relative overflow-hidden
+                  bg-theme-card-bg rounded-2xl shadow-xl p-7 flex flex-col items-center text-center transition-all duration-300
+                  hover:shadow-2xl hover:-translate-y-2 hover:bg-theme-card-hover-bg
+                  border border-theme-border hover:border-theme-link relative overflow-hidden
                 `} key={investor.id}>
-                  {/* Background gradient overlay */}
-                  <div className={`absolute inset-0 opacity-10 blur-xl ${themeColors['gradient-start-investor']} ${themeColors['gradient-end-investor']}`}></div>
+                  {/* Background gradient overlay - Using theme variables */}
+                  <div className={`absolute inset-0 opacity-10 blur-xl bg-gradient-to-br from-theme-blob-1 to-theme-blob-2`}></div>
 
                   {/* Profile Picture for Investor */}
                   <img
                     src={investor.imageUrl}
                     alt={investor.name}
                     className={`relative w-24 h-24 rounded-full object-cover mb-5
-                      ring-4 ring-offset-4 ring-blue-300/50 ring-offset-white
+                      ring-4 ring-offset-4 ring-theme-link/50 ring-offset-theme-card-bg
                       transform transition-transform duration-300 hover:scale-110 cursor-pointer
                     `}
                     // Add a fallback for image load errors if loremflickr fails
                     onError={(e) => { e.target.onerror = null; e.target.src = `https://via.placeholder.com/150/CCCCCC/808080?text=${investor.name.split(' ')[0][0]}${investor.name.split(' ')[1][0]}`; }}
                   />
                   
-                  <h3 className={`text-2xl font-bold ${themeColors['text-accent']} mb-2 tracking-wide`}>{investor.name}</h3>
-                  <p className={`text-gray-700 text-base mb-3 max-h-16 overflow-hidden text-ellipsis line-clamp-2`}>{investor.bio}</p>
+                  <h3 className={`text-2xl font-bold text-theme-heading-primary mb-2 tracking-wide`}>{investor.name}</h3>
+                  <p className={`text-theme-text-secondary text-base mb-3 max-h-16 overflow-hidden text-ellipsis line-clamp-2`}>{investor.bio}</p>
 
-                  <div className="flex flex-col gap-2 text-sm text-gray-600 mb-5 w-full">
-                    <p className="flex items-center justify-center"><Lightbulb className="inline-block w-4 h-4 mr-2 text-yellow-500" /> <span className="font-semibold text-gray-800">Focus:</span> {investor.focus}</p>
-                    <p className="flex items-center justify-center"><MapPin className="inline-block w-4 h-4 mr-2 text-red-500" /> <span className="font-semibold text-gray-800">Location:</span> {investor.location}</p>
-                    <p className="flex items-center justify-center"><Clock className="inline-block w-4 h-4 mr-2 text-green-500" /> <span className="font-semibold text-gray-800">Stage:</span> {investor.stage}</p>
+                  <div className="flex flex-col gap-2 text-sm text-theme-text-secondary mb-5 w-full">
+                    <p className="flex items-center justify-center"><Lightbulb className="inline-block w-4 h-4 mr-2 text-yellow-500" /> <span className="font-semibold text-theme-text">Focus:</span> {investor.focus}</p>
+                    <p className="flex items-center justify-center"><MapPin className="inline-block w-4 h-4 mr-2 text-red-500" /> <span className="font-semibold text-theme-text">Location:</span> {investor.location}</p>
+                    <p className="flex items-center justify-center"><Clock className="inline-block w-4 h-4 mr-2 text-green-500" /> <span className="font-semibold text-theme-text">Stage:</span> {investor.stage}</p>
                   </div>
 
-                  <Link to={`/profile/${investor.id}`} className={`mt-auto px-8 py-3 ${themeColors['button-primary-bg']} text-white rounded-full ${themeColors['button-primary-hover']} transition duration-200 font-semibold ${themeColors['shadow-light']} hover:shadow-md transform hover:scale-105 flex items-center gap-2`}>
+                  <Link to={`/profile/${investor.id}`} className={`mt-auto px-8 py-3 bg-theme-button-primary-bg text-theme-button-primary-text rounded-full hover:bg-theme-button-primary-hover transition duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2`}>
                     <BriefcaseBusiness className="w-5 h-5" /> View Profile
                   </Link>
                 </div>
               ))
             ) : (
-              <div className={`col-span-full text-center py-20 ${themeColors['search-panel-bg']} rounded-2xl ${themeColors['shadow-medium']} border ${themeColors['border-color']}`}>
-                <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-gray-400 opacity-60" />
-                <p className={`text-xl md:text-2xl ${themeColors['text-secondary']} font-semibold`}>
+              <div className={`col-span-full text-center py-20 bg-theme-card-bg rounded-2xl shadow-xl border border-theme-border`}>
+                <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-theme-text-secondary opacity-60" />
+                <p className={`text-xl md:text-2xl text-theme-text-secondary font-semibold`}>
                   No investors found matching your refined search.
                 </p>
-                <p className={`text-md ${themeColors['text-secondary']} mt-2`}>Try broadening your filters or search query.</p>
+                <p className={`text-md text-theme-text-secondary mt-2`}>Try broadening your filters or search query.</p>
               </div>
             )}
           </div>
@@ -345,46 +315,46 @@ const ExploreOpportunities = () => {
             {filteredStartups.length > 0 ? (
               filteredStartups.map((startup) => (
                 <div className={`
-                  ${themeColors['card-bg']} rounded-2xl ${themeColors['shadow-medium']} p-7 flex flex-col items-center text-center transition-all duration-300
-                  hover:${themeColors['shadow-strong']} hover:-translate-y-2 ${themeColors['card-hover-bg']}
-                  border ${themeColors['border-color']} hover:border-emerald-400 relative overflow-hidden
+                  bg-theme-card-bg rounded-2xl shadow-xl p-7 flex flex-col items-center text-center transition-all duration-300
+                  hover:shadow-2xl hover:-translate-y-2 hover:bg-theme-card-hover-bg
+                  border border-theme-border hover:border-theme-link relative overflow-hidden
                 `} key={startup.id}>
-                  {/* Background gradient overlay */}
-                  <div className={`absolute inset-0 opacity-10 blur-xl ${themeColors['gradient-start-startup']} ${themeColors['gradient-end-startup']}`}></div>
+                  {/* Background gradient overlay - Using theme variables */}
+                  <div className={`absolute inset-0 opacity-10 blur-xl bg-gradient-to-br from-theme-blob-3 to-theme-blob-1`}></div>
 
                   {/* Profile Picture for Startup */}
                   <img
                     src={startup.imageUrl}
                     alt={startup.name}
                     className={`relative w-24 h-24 rounded-full object-cover mb-5
-                      ring-4 ring-offset-4 ring-emerald-300/50 ring-offset-white
+                      ring-4 ring-offset-4 ring-theme-link/50 ring-offset-theme-card-bg
                       transform transition-transform duration-300 hover:scale-110 cursor-pointer
                     `}
                     // Add a fallback for image load errors if loremflickr fails
                     onError={(e) => { e.target.onerror = null; e.target.src = `https://via.placeholder.com/150/CCCCCC/808080?text=${startup.name.split(' ')[0][0]}${startup.name.split(' ')[1] ? startup.name.split(' ')[1][0] : ''}`; }}
                   />
                   
-                  <h3 className={`text-2xl font-bold ${themeColors['text-accent']} mb-2 tracking-wide`}>{startup.name}</h3>
-                  <p className={`text-gray-700 text-base mb-3 max-h-16 overflow-hidden text-ellipsis line-clamp-2`}>{startup.tagline}</p>
+                  <h3 className={`text-2xl font-bold text-theme-heading-primary mb-2 tracking-wide`}>{startup.name}</h3>
+                  <p className={`text-theme-text-secondary text-base mb-3 max-h-16 overflow-hidden text-ellipsis line-clamp-2`}>{startup.tagline}</p>
 
-                  <div className="flex flex-col gap-2 text-sm text-gray-600 mb-5 w-full">
-                    <p className="flex items-center justify-center"><Building2 className="inline-block w-4 h-4 mr-2 text-indigo-500" /> <span className="font-semibold text-gray-800">Industry:</span> {startup.industry}</p>
-                    <p className="flex items-center justify-center"><DollarSign className="inline-block w-4 h-4 mr-2 text-yellow-500" /> <span className="font-semibold text-gray-800">Funding Goal:</span> {startup.fundingGoal}</p>
-                    <p className="flex items-center justify-center"><MapPin className="inline-block w-4 h-4 mr-2 text-red-500" /> <span className="font-semibold text-gray-800">Location:</span> {startup.location}</p>
+                  <div className="flex flex-col gap-2 text-sm text-theme-text-secondary mb-5 w-full">
+                    <p className="flex items-center justify-center"><Building2 className="inline-block w-4 h-4 mr-2 text-indigo-500" /> <span className="font-semibold text-theme-text">Industry:</span> {startup.industry}</p>
+                    <p className="flex items-center justify-center"><DollarSign className="inline-block w-4 h-4 mr-2 text-yellow-500" /> <span className="font-semibold text-theme-text">Funding Goal:</span> {startup.fundingGoal}</p>
+                    <p className="flex items-center justify-center"><MapPin className="inline-block w-4 h-4 mr-2 text-red-500" /> <span className="font-semibold text-theme-text">Location:</span> {startup.location}</p>
                   </div>
                   
-                  <Link to={`/startups/${startup.id}`} className={`mt-auto px-8 py-3 ${themeColors['button-primary-bg']} text-white rounded-full ${themeColors['button-primary-hover']} transition duration-200 font-semibold ${themeColors['shadow-light']} hover:shadow-md transform hover:scale-105 flex items-center gap-2`}>
+                  <Link to={`/startups/${startup.id}`} className={`mt-auto px-8 py-3 bg-theme-button-primary-bg text-theme-button-primary-text rounded-full hover:bg-theme-button-primary-hover transition duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2`}>
                     <BriefcaseBusiness className="w-5 h-5" /> View Profile
                   </Link>
                 </div>
               ))
             ) : (
-              <div className={`col-span-full text-center py-20 ${themeColors['search-panel-bg']} rounded-2xl ${themeColors['shadow-medium']} border ${themeColors['border-color']}`}>
-                <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-gray-400 opacity-60" />
-                <p className={`text-xl md:text-2xl ${themeColors['text-secondary']} font-semibold`}>
+              <div className={`col-span-full text-center py-20 bg-theme-card-bg rounded-2xl shadow-xl border border-theme-border`}>
+                <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-theme-text-secondary opacity-60" />
+                <p className={`text-xl md:text-2xl text-theme-text-secondary font-semibold`}>
                   No startups found matching your refined search.
                 </p>
-                <p className={`text-md ${themeColors['text-secondary']} mt-2`}>Try broadening your filters or search query.</p>
+                <p className={`text-md text-theme-text-secondary mt-2`}>Try broadening your filters or search query.</p>
               </div>
             )}
           </div>
@@ -394,96 +364,101 @@ const ExploreOpportunities = () => {
       {/* Filter Popup as an Overlay Modal */}
       {showFilterPopup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className={`relative ${themeColors['card-bg']} rounded-2xl ${themeColors['shadow-strong']} p-8 w-full max-w-md animate-scale-in border ${themeColors['border-color']}`}>
+          <div className={`relative bg-theme-card-bg rounded-2xl shadow-2xl p-8 w-full max-w-md animate-scale-in border border-theme-border`}>
             <button
               onClick={() => setShowFilterPopup(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors z-10"
+              className="absolute top-4 right-4 text-theme-text-secondary hover:text-theme-text transition-colors z-10"
               aria-label="Close filters"
             >
               <X size={28} />
             </button>
-            <h3 className={`text-2xl font-bold ${themeColors['text-accent']} border-b ${themeColors['border-color']} pb-3 mb-5`}>Apply Filters</h3>
+            <h3 className={`text-2xl font-bold text-theme-heading-primary border-b border-theme-border pb-3 mb-5`}>Apply Filters</h3>
 
             <div className="space-y-5"> {/* Added space-y for consistent spacing */}
               {/* Location Filter */}
               <div>
-                <label htmlFor="filter-location" className={`block ${themeColors['text-secondary']} text-sm font-medium mb-2 flex items-center`}>
+                <label htmlFor="filter-location" className={`block text-theme-text-secondary text-sm font-medium mb-2 flex items-center`}>
                   <MapPin className="inline-block w-4 h-4 mr-2 text-blue-500" /> Location
                 </label>
                 <select
                   id="filter-location"
-                  className={`w-full p-3 ${themeColors['input-bg']} ${themeColors['text-primary']} rounded-lg border ${themeColors['border-color']} focus:outline-none focus:ring-2 ${themeColors['focus-ring']} appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_0.75rem_center] bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]`}
+                  className={`w-full p-3 bg-theme-input-bg text-theme-text rounded-lg border border-theme-input-border focus:outline-none focus:ring-2 focus:ring-theme-link/50 appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_0.75rem_center] bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]`}
                   value={filterLocation}
                   onChange={(e) => setFilterLocation(e.target.value)}
                 >
                   {uniqueLocations.map(loc => (
-                    <option key={loc} value={loc} className={`${themeColors['input-bg']} ${themeColors['text-primary']}`}>{loc === '' ? 'All Locations' : loc}</option>
+                    <option key={loc} value={loc}>{loc === '' ? 'All Locations' : loc}</option>
                   ))}
                 </select>
               </div>
 
               {/* Industry Filter */}
               <div>
-                <label htmlFor="filter-industry" className={`block ${themeColors['text-secondary']} text-sm font-medium mb-2 flex items-center`}>
-                  <Building2 className="inline-block w-4 h-4 mr-2 text-indigo-500" /> Industry
+                <label htmlFor="filter-industry" className={`block text-theme-text-secondary text-sm font-medium mb-2 flex items-center`}>
+                  <Building2 className="inline-block w-4 h-4 mr-2 text-purple-500" /> Industry
                 </label>
                 <select
                   id="filter-industry"
-                  className={`w-full p-3 ${themeColors['input-bg']} ${themeColors['text-primary']} rounded-lg border ${themeColors['border-color']} focus:outline-none focus:ring-2 ${themeColors['focus-ring']} appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_0.75rem_center] bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]`}
+                  className={`w-full p-3 bg-theme-input-bg text-theme-text rounded-lg border border-theme-input-border focus:outline-none focus:ring-2 focus:ring-theme-link/50 appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_0.75rem_center] bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]`}
                   value={filterIndustry}
                   onChange={(e) => setFilterIndustry(e.target.value)}
                 >
                   {uniqueIndustries.map(ind => (
-                    <option key={ind} value={ind} className={`${themeColors['input-bg']} ${themeColors['text-primary']}`}>{ind === '' ? 'All Industries' : ind}</option>
+                    <option key={ind} value={ind}>{ind === '' ? 'All Industries' : ind}</option>
                   ))}
                 </select>
               </div>
 
               {/* Stage Filter */}
               <div>
-                <label htmlFor="filter-stage" className={`block ${themeColors['text-secondary']} text-sm font-medium mb-2 flex items-center`}>
+                <label htmlFor="filter-stage" className={`block text-theme-text-secondary text-sm font-medium mb-2 flex items-center`}>
                   <TrendingUp className="inline-block w-4 h-4 mr-2 text-green-500" /> Stage
                 </label>
                 <select
                   id="filter-stage"
-                  className={`w-full p-3 ${themeColors['input-bg']} ${themeColors['text-primary']} rounded-lg border ${themeColors['border-color']} focus:outline-none focus:ring-2 ${themeColors['focus-ring']} appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_0.75rem_center] bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]`}
+                  className={`w-full p-3 bg-theme-input-bg text-theme-text rounded-lg border border-theme-input-border focus:outline-none focus:ring-2 focus:ring-theme-link/50 appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_0.75rem_center] bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]`}
                   value={filterStage}
                   onChange={(e) => setFilterStage(e.target.value)}
                 >
                   {uniqueStages.map(stage => (
-                    <option key={stage} value={stage} className={`${themeColors['input-bg']} ${themeColors['text-primary']}`}>{stage === '' ? 'All Stages' : stage}</option>
+                    <option key={stage} value={stage}>{stage === '' ? 'All Stages' : stage}</option>
                   ))}
                 </select>
               </div>
 
-              {/* Tab-specific filters */}
-              {activeTab === 'investor' ? (
-                <label htmlFor="investorActive" className={`flex items-center ${themeColors['text-secondary']} cursor-pointer text-sm font-medium`}>
-                  <input
-                    type="checkbox"
-                    id="investorActive"
-                    className="mr-2 h-5 w-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 bg-white accent-blue-600 transform scale-110"
-                    checked={onlyActiveInvestors}
-                    onChange={(e) => setOnlyActiveInvestors(e.target.checked)}
-                  />
-                  <UserCheck className="inline-block w-4 h-4 mr-2 text-purple-500" /> Only Active Investors
-                </label>
-              ) : (
-                <label htmlFor="startupFunded" className={`flex items-center ${themeColors['text-secondary']} cursor-pointer text-sm font-medium`}>
-                  <input
-                    type="checkbox"
-                    id="startupFunded"
-                    className="mr-2 h-5 w-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 bg-white accent-blue-600 transform scale-110"
-                    checked={onlyFundedStartups}
-                    onChange={(e) => setOnlyFundedStartups(e.target.checked)}
-                  />
-                  <DollarSign className="inline-block w-4 h-4 mr-2 text-yellow-500" /> Only Funded Startups
-                </label>
+              {/* Checkboxes based on active tab */}
+              {activeTab === 'investor' && (
+                <div>
+                  <label className={`flex items-center text-theme-text-secondary text-sm font-medium cursor-pointer`}>
+                    <input
+                      type="checkbox"
+                      className={`accent-theme-link h-4 w-4 rounded-md border-theme-input-border focus:ring-theme-link focus:ring-offset-2 focus:ring-offset-theme-card-bg`}
+                      checked={onlyActiveInvestors}
+                      onChange={(e) => setOnlyActiveInvestors(e.target.checked)}
+                    />
+                    <UserCheck className="inline-block w-4 h-4 ml-3 mr-2 text-blue-500" /> Only Active Investors
+                  </label>
+                </div>
               )}
-              
+
+              {activeTab === 'startup' && (
+                <div>
+                  <label className={`flex items-center text-theme-text-secondary text-sm font-medium cursor-pointer`}>
+                    <input
+                      type="checkbox"
+                      className={`accent-theme-link h-4 w-4 rounded-md border-theme-input-border focus:ring-theme-link focus:ring-offset-2 focus:ring-offset-theme-card-bg`}
+                      checked={onlyFundedStartups}
+                      onChange={(e) => setOnlyFundedStartups(e.target.checked)}
+                    />
+                    <DollarSign className="inline-block w-4 h-4 ml-3 mr-2 text-green-500" /> Only Funded Startups
+                  </label>
+                </div>
+              )}
+
+              {/* Apply Filters Button */}
               <button
+                className={`w-full py-3 bg-theme-button-primary-bg text-theme-button-primary-text rounded-lg hover:bg-theme-button-primary-hover transition duration-200 font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-theme-link/50 flex items-center justify-center gap-2`}
                 onClick={applyFilters}
-                className={`w-full mt-4 py-3 ${themeColors['button-primary-bg']} text-white rounded-lg ${themeColors['button-primary-hover']} transition duration-200 ${themeColors['shadow-light']} font-semibold text-lg flex items-center justify-center gap-2`}
               >
                 <Zap className="w-5 h-5" /> Apply Filters
               </button>

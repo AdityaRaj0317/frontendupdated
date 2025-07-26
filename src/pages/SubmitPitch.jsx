@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { API_BASE_URL } from "../config";
+import { useTheme } from '../context/ThemeContext'; // <--- Import useTheme hook
 
 // Import Lucide Icons
 import {
@@ -17,19 +18,21 @@ import {
 
 const SubmitPitch = () => {
     const navigate = useNavigate();
+    const { isDarkMode } = useTheme(); // <--- Use the useTheme hook to get theme state
+
     const [formData, setFormData] = useState({
         name: "",
         description: "",
         industry: "",
-        domain: "",    // <--- NEW FIELD: Domain
+        domain: "",
         founder: "",
-        stage: "",     // <--- NEW FIELD: Stage
+        stage: "",
         website: "",
-        videoUrl: "", // For URL upload
+        videoUrl: "",
     });
 
-    const [videoFile, setVideoFile] = useState(null); // New state for file upload
-    const [uploadMethod, setUploadMethod] = useState('url'); // 'url' or 'file'
+    const [videoFile, setVideoFile] = useState(null);
+    const [uploadMethod, setUploadMethod] = useState('url');
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -48,20 +51,19 @@ const SubmitPitch = () => {
         setSuccess("");
     };
 
-    // Function to reset the form fields and state
     const resetForm = () => {
         setFormData({
             name: "",
             description: "",
             industry: "",
-            domain: "",    // <--- Reset Domain
+            domain: "",
             founder: "",
-            stage: "",     // <--- Reset Stage
+            stage: "",
             website: "",
             videoUrl: "",
         });
         setVideoFile(null);
-        setUploadMethod('url'); // Reset to URL upload as default
+        setUploadMethod('url');
         setError("");
         setSuccess("");
         setLoading(false);
@@ -87,16 +89,14 @@ const SubmitPitch = () => {
 
             if (uploadMethod === 'file' && videoFile) {
                 const data = new FormData();
-                // Append all formData fields
                 for (const key in formData) {
                     data.append(key, formData[key]);
                 }
-                // Append the video file
                 data.append('video', videoFile);
                 body = data;
-                headers = { Authorization: `Bearer ${token}` }; // Content-Type will be set automatically by browser for FormData
+                headers = { Authorization: `Bearer ${token}` };
 
-            } else { // URL upload method
+            } else {
                 headers = {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
@@ -114,9 +114,9 @@ const SubmitPitch = () => {
 
             if (res.ok) {
                 setSuccess("Pitch submitted successfully! Redirecting...");
-                resetForm(); // Reset form after successful submission
-                setIsFormVisible(false); // Hide the form to show the initial prompt
-                setTimeout(() => navigate("/startups"), 1500); // Navigate to startups page
+                resetForm();
+                setIsFormVisible(false);
+                setTimeout(() => navigate("/startups"), 1500);
             } else {
                 setError(data.message || (data.errors && data.errors.map(err => err.message).join(", ")) || "Failed to submit pitch. Please check your inputs.");
             }
@@ -141,13 +141,15 @@ const SubmitPitch = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-950 dark:via-purple-950 dark:to-blue-950 flex items-center justify-center py-10 px-4">
+     
+
             <motion.div
-                className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-white/30 dark:border-gray-700/50"
+                // Removed bg-white/80 and dark:bg-gray-800 for full transparency
+                className="max-w-2xl w-full mx-auto p-8 rounded-2xl shadow-xl border border-white/30 dark:border-gray-700/50 bg-white/80 and dark:bg-gray-800 for full transparency"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-            >
+                >
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white flex items-center">
                         <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
@@ -316,7 +318,7 @@ const SubmitPitch = () => {
                                         <option value="">Select Stage</option>
                                         <option value="idea">Idea</option>
                                         <option value="MVP">MVP</option>
-                                        <option value="revenue">MVP with Revenue</option> {/* Adjusted to match "revenue" option */}
+                                        <option value="revenue">MVP with Revenue</option>
                                     </select>
                                 </div>
 
@@ -415,7 +417,7 @@ const SubmitPitch = () => {
                     </AnimatePresence>
                 )}
             </motion.div>
-        </div>
+        
     );
 };
 
